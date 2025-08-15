@@ -363,8 +363,9 @@ namespace Jirou.Core
             Gizmos.color = Color.cyan;
             Gizmos.DrawLine(new Vector3(0, 2, spawnZ), 
                             new Vector3(0, 2, hitZ));
-            Gizmos.DrawCone(new Vector3(0, 2, hitZ), 
-                            Quaternion.LookRotation(Vector3.back), 0.5f);
+            // 矢印の先端を表現するためのワイヤーキューブ
+            Gizmos.DrawWireCube(new Vector3(0, 2, hitZ), 
+                                new Vector3(0.5f, 0.5f, 0.5f));
         }
 #endif
     }
