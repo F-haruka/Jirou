@@ -1,7 +1,6 @@
 # Jirou
 
 [![Unity Version](https://img.shields.io/badge/Unity-6000.2.0f1%20LTS-blue.svg)](https://unity.com/)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/Platform-Windows%20PC-lightgrey.svg)](https://github.com/yourusername/jirou)
 [![Build Status](https://img.shields.io/badge/Build-Passing-brightgreen.svg)](https://github.com/yourusername/jirou)
 [![Development Status](https://img.shields.io/badge/Status-Early%20Development-orange.svg)](https://github.com/yourusername/jirou)
@@ -69,10 +68,6 @@ cd jirou
 1. Unityエディタで `Window > General > Test Runner` を開く
 2. EditModeタブまたはPlayModeタブを選択
 3. 「Run All」ボタンをクリック
-
-## 📄 ライセンス
-
-このプロジェクトはMITライセンスの下で公開されています。詳細は [LICENSE](LICENSE) ファイルを参照してください。
 
 ---
 
