@@ -182,10 +182,170 @@ git commit -m "メッセージ"    # 変更をコミット
 - ゲームプレイ、マネージャー、UIの明確な分離を維持
 - Unityのコンポーネントベースアーキテクチャに従う
 
-### テスト
-- Unityエディタでプレイテスト
-- 実装されている場合はUnity Test Frameworkを使用
-- ターゲットプラットフォームでビルドしてテスト
+## ユニットテスト
+
+### テスト環境構成
+
+プロジェクトには Unity Test Runner を使用した自動テスト環境が構築されています：
+
+```
+Assets/Tests/
+├── EditMode/               # エディタモードテスト
+│   ├── Jirou.EditModeTests.asmdef
+│   └── ConductorTests.cs
+└── PlayMode/               # プレイモードテスト
+    ├── Jirou.PlayModeTests.asmdef
+    └── GameplayIntegrationTests.cs
+```
+
+### テスト実行方法
+
+**重要：** ユニットテストの実行はUnityエディタを使用してください。
+
+#### Unityエディタでのテスト実行（推奨）
+
+1. **Test Runnerを開く**
+   - Unityエディタで `Window > General > Test Runner` を選択
+
+2. **テストを実行**
+   - EditModeタブ: エディタ上で動作する単体テスト
+   - PlayModeタブ: ゲーム実行環境での統合テスト
+   - 各テストまたは「Run All」ボタンをクリック
+
+3. **テスト結果の確認**
+   - 緑のチェック: テスト成功
+   - 赤のX: テスト失敗（詳細はConsoleウィンドウで確認）
+
+
+### Unityテストのベストプラクティス
+
+#### 1. テストの分類
+
+**EditModeテスト：**
+- ピュアなロジックテスト（計算、アルゴリズム）
+- MonoBehaviourを使わないクラスのテスト
+- ScriptableObjectのデータ検証
+- 実行が高速で、Unityエンジンの機能を必要としないテスト
+
+**PlayModeテスト：**
+- GameObject、MonoBehaviourを使用するテスト
+- 物理演算、コルーチン、時間経過を含むテスト
+- 実際のゲームプレイシナリオの統合テスト
+- オーディオ、グラフィックス、入力システムのテスト
+
+#### 2. テスト作成のガイドライン
+
+```csharp
+// 良いテストの例
+[Test]
+public void NoteZPosition_CalculatesCorrectly()
+{
+    // Arrange - 準備
+    float spawnZ = 20f;
+    float beatsPassed = 2f;
+    float noteSpeed = 5f;
+    
+    // Act - 実行
+    float actualZ = spawnZ - (beatsPassed * noteSpeed);
+    
+    // Assert - 検証
+    Assert.AreEqual(10f, actualZ, 0.001f);
+}
+```
+
+#### 3. 奥行き型リズムゲーム特有のテストポイント
+
+- **タイミング精度テスト：** `AudioSettings.dspTime`の正確性
+- **Z軸移動テスト：** ノーツの奥行き移動計算
+- **判定精度テスト：** Perfect/Great/Good判定のタイミングウィンドウ
+- **レーン配置テスト：** 4レーンのX座標配置（-3, -1, 1, 3）
+- **3D空間判定テスト：** Z座標による判定ライン検出
+
+#### 4. テスト命名規則
+
+```
+[テスト対象]_[テスト条件]_[期待結果]
+
+例：
+- BPMToSeconds_ConvertsBPMCorrectly
+- NoteMovement_MovesForwardOverTime
+- TimingWindow_PerfectJudgment
+```
+
+#### 5. テストデータ管理
+
+```csharp
+// テスト用のScriptableObjectを作成
+[CreateAssetMenu(fileName = "TestChartData", menuName = "Tests/ChartData")]
+public class TestChartData : ScriptableObject
+{
+    public List<NoteData> notes;
+    public float bpm = 120f;
+}
+```
+
+#### 6. 非同期テストの扱い
+
+```csharp
+[UnityTest]
+public IEnumerator AudioSync_MaintainsConsistentTiming()
+{
+    float startTime = AudioSettings.dspTime;
+    
+    yield return new WaitForSeconds(1f);
+    
+    float elapsed = (float)(AudioSettings.dspTime - startTime);
+    Assert.AreEqual(1f, elapsed, 0.1f);
+}
+```
+
+#### 7. テストのパフォーマンス基準
+
+- EditModeテスト: 各テスト0.1秒以内で完了
+- PlayModeテスト: 各テスト5秒以内で完了
+- 全テストスイート: 1分以内で全テスト完了
+
+#### 8. CI/CD統合
+
+プロジェクトのテストは以下のタイミングで実行されるべきです：
+- コミット前（ローカル）
+- プルリクエスト作成時
+- メインブランチへのマージ時
+
+### テスト実行時の注意事項
+
+1. **Test Runnerウィンドウ：** Unityエディタの `Window > General > Test Runner` から実行
+2. **結果の確認：** Test Runnerウィンドウとコンソールでテスト結果を確認
+3. **エラー時の対処：** Consoleウィンドウでエラーの詳細を確認
+4. **メタファイル：** テストファイルには必ず.metaファイルを付与
+
+### テスト駆動開発（TDD）の推奨
+
+新機能実装時は以下の順序で開発することを推奨：
+
+1. テストを先に書く（Red）
+2. テストが通る最小限の実装（Green）
+3. コードをリファクタリング（Refactor）
+
+```csharp
+// 1. まずテストを書く
+[Test]
+public void ScoreCalculation_PerfectTiming_Returns1000Points()
+{
+    var scorer = new ScoreCalculator();
+    int score = scorer.Calculate(JudgmentType.Perfect);
+    Assert.AreEqual(1000, score);
+}
+
+// 2. 実装する
+public class ScoreCalculator
+{
+    public int Calculate(JudgmentType judgment)
+    {
+        return judgment == JudgmentType.Perfect ? 1000 : 0;
+    }
+}
+```
 
 ## AI開発のための注意事項
 
