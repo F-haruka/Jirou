@@ -97,3 +97,6 @@ JirouUnity/[Aa]ssets/Unity.VisualScripting.Generated/VisualScripting.Core/Proper
 
 # Auto-generated scenes by play mode tests
 JirouUnity/[Aa]ssets/[Ii]nit[Tt]est[Ss]cene*.unity*
+
+# Claude Code
+.claude/settings.local.json
