@@ -292,9 +292,53 @@ namespace Jirou.Editor
                 
             if (!string.IsNullOrEmpty(path))
             {
-                // JSON変換処理（実装省略）
-                Debug.Log($"エクスポート: {path}");
-                EditorUtility.DisplayDialog("成功", "JSONファイルをエクスポートしました", "OK");
+                try
+                {
+                    // ChartDataをJSONエクスポート用の構造に変換
+                    var exportData = new ChartExportData
+                    {
+                        songName = currentChart.songName,
+                        artist = currentChart.artist,
+                        bpm = currentChart.bpm,
+                        difficulty = currentChart.difficulty,
+                        difficultyName = currentChart.difficultyName,
+                        firstBeatOffset = currentChart.firstBeatOffset,
+                        chartAuthor = currentChart.chartAuthor,
+                        chartVersion = currentChart.chartVersion,
+                        notes = new List<NoteExportData>()
+                    };
+                    
+                    // ノーツデータをエクスポート形式に変換
+                    foreach (var note in currentChart.notes)
+                    {
+                        var exportNote = new NoteExportData
+                        {
+                            type = note.noteType.ToString(),
+                            lane = note.laneIndex,
+                            time = note.timeToHit,
+                            duration = note.holdDuration,
+                            scale = note.visualScale,
+                            color = ColorToHex(note.noteColor),
+                            score = note.baseScore,
+                            multiplier = note.scoreMultiplier
+                        };
+                        exportData.notes.Add(exportNote);
+                    }
+                    
+                    // JSONに変換して保存
+                    string json = JsonUtility.ToJson(exportData, true);
+                    System.IO.File.WriteAllText(path, json);
+                    
+                    Debug.Log($"譜面をエクスポートしました: {path}");
+                    EditorUtility.DisplayDialog("成功", 
+                        $"JSONファイルをエクスポートしました\n{path}", "OK");
+                }
+                catch (System.Exception e)
+                {
+                    Debug.LogError($"エクスポート失敗: {e.Message}");
+                    EditorUtility.DisplayDialog("エラー", 
+                        $"エクスポートに失敗しました\n{e.Message}", "OK");
+                }
             }
         }
         
@@ -307,11 +351,128 @@ namespace Jirou.Editor
                 
             if (!string.IsNullOrEmpty(path))
             {
-                // JSON読み込み処理（実装省略）
-                Debug.Log($"インポート: {path}");
-                EditorUtility.DisplayDialog("成功", "JSONファイルをインポートしました", "OK");
+                try
+                {
+                    // JSONファイルを読み込み
+                    string json = System.IO.File.ReadAllText(path);
+                    var importData = JsonUtility.FromJson<ChartExportData>(json);
+                    
+                    if (importData == null)
+                    {
+                        throw new System.Exception("JSONデータの解析に失敗しました");
+                    }
+                    
+                    // 現在の譜面データを更新
+                    Undo.RecordObject(currentChart, "Import Chart from JSON");
+                    
+                    currentChart.songName = importData.songName;
+                    currentChart.artist = importData.artist;
+                    currentChart.bpm = importData.bpm;
+                    currentChart.difficulty = importData.difficulty;
+                    currentChart.difficultyName = importData.difficultyName;
+                    currentChart.firstBeatOffset = importData.firstBeatOffset;
+                    currentChart.chartAuthor = importData.chartAuthor;
+                    currentChart.chartVersion = importData.chartVersion;
+                    
+                    // ノーツデータをクリアして新規追加
+                    currentChart.notes.Clear();
+                    
+                    foreach (var importNote in importData.notes)
+                    {
+                        var note = new NoteData
+                        {
+                            noteType = (NoteType)System.Enum.Parse(typeof(NoteType), importNote.type),
+                            laneIndex = importNote.lane,
+                            timeToHit = importNote.time,
+                            holdDuration = importNote.duration,
+                            visualScale = importNote.scale,
+                            noteColor = HexToColor(importNote.color),
+                            baseScore = importNote.score,
+                            scoreMultiplier = importNote.multiplier
+                        };
+                        currentChart.notes.Add(note);
+                    }
+                    
+                    // ノーツをソート
+                    currentChart.SortNotesByTime();
+                    EditorUtility.SetDirty(currentChart);
+                    
+                    Debug.Log($"譜面をインポートしました: {path}");
+                    EditorUtility.DisplayDialog("成功", 
+                        $"JSONファイルをインポートしました\n{path}\n{importData.notes.Count}個のノーツを読み込みました", "OK");
+                }
+                catch (System.Exception e)
+                {
+                    Debug.LogError($"インポート失敗: {e.Message}");
+                    EditorUtility.DisplayDialog("エラー", 
+                        $"インポートに失敗しました\n{e.Message}", "OK");
+                }
             }
         }
+        
+        // 色をHEX文字列に変換
+        private string ColorToHex(Color color)
+        {
+            int r = Mathf.RoundToInt(color.r * 255);
+            int g = Mathf.RoundToInt(color.g * 255);
+            int b = Mathf.RoundToInt(color.b * 255);
+            int a = Mathf.RoundToInt(color.a * 255);
+            return $"#{r:X2}{g:X2}{b:X2}{a:X2}";
+        }
+        
+        // HEX文字列を色に変換
+        private Color HexToColor(string hex)
+        {
+            if (string.IsNullOrEmpty(hex))
+                return Color.white;
+                
+            hex = hex.Replace("#", "");
+            
+            if (hex.Length < 6)
+                return Color.white;
+                
+            try
+            {
+                int r = System.Convert.ToInt32(hex.Substring(0, 2), 16);
+                int g = System.Convert.ToInt32(hex.Substring(2, 2), 16);
+                int b = System.Convert.ToInt32(hex.Substring(4, 2), 16);
+                int a = hex.Length >= 8 ? System.Convert.ToInt32(hex.Substring(6, 2), 16) : 255;
+                
+                return new Color(r / 255f, g / 255f, b / 255f, a / 255f);
+            }
+            catch
+            {
+                return Color.white;
+            }
+        }
+    }
+    
+    // JSONエクスポート/インポート用のデータ構造
+    [System.Serializable]
+    public class ChartExportData
+    {
+        public string songName;
+        public string artist;
+        public float bpm;
+        public int difficulty;
+        public string difficultyName;
+        public float firstBeatOffset;
+        public string chartAuthor;
+        public string chartVersion;
+        public List<NoteExportData> notes;
+    }
+    
+    [System.Serializable]
+    public class NoteExportData
+    {
+        public string type;
+        public int lane;
+        public float time;
+        public float duration;
+        public float scale;
+        public string color;
+        public int score;
+        public float multiplier;
     }
 }
 #endif
