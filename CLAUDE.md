@@ -39,60 +39,41 @@ Jirou/
 │   ├── architectures/      # アーキテクチャ関連ドキュメント
 │   ├── design/            # デザイン関連ドキュメント
 │   └── plans/
-│       ├── setup.md       # 詳細なセットアップガイド（日本語）
-│       ├── step.md        # 包括的な開発ガイド（日本語）
 │       └── 3d-rhythm-game-guide.md  # 奥行き型リズムゲーム実装手順書
 ├── JirouUnity/            # メインUnityプロジェクトディレクトリ
 │   ├── Assets/
-│   │   ├── Animations/    # アニメーション関連アセット
-│   │   ├── Audio/
-│   │   │   ├── Music/     # BGM・楽曲ファイル
-│   │   │   └── SFX/       # 効果音ファイル
-│   │   ├── DefaultVolumeProfile.asset  # URPボリューム設定
-│   │   ├── Fonts/         # フォントファイル
-│   │   ├── InputSystem_Actions.inputactions  # 入力システム設定
-│   │   ├── Materials/     # マテリアルファイル
-│   │   ├── Prefabs/
-│   │   │   ├── Gameplay/  # ゲームプレイ用プレハブ
-│   │   │   └── UI/        # UI用プレハブ
-│   │   ├── Scenes/
-│   │   │   └── SampleScene.unity  # メインシーン
-│   │   ├── Scripts/
-│   │   │   ├── Gameplay/  # ゲームプレイ関連スクリプト（現在空）
-│   │   │   ├── Managers/  # 各種マネージャースクリプト（現在空）
-│   │   │   └── UI/        # UI関連スクリプト（現在空）
 │   │   ├── Settings/      # URP設定とシーンテンプレート
-│   │   ├── Shaders/       # カスタムシェーダー
-│   │   ├── _Jirou/         # プロジェクト専用アセットフォルダ
-│   │   │   ├── Art/
-│   │   │   │   ├── Sprites/
-│   │   │   │   │   ├── Notes/   # ノーツスプライト
-│   │   │   │   │   ├── Lanes/   # レーンスプライト
-│   │   │   │   │   └── UI/      # UIスプライト
-│   │   │   │   ├── Materials/   # 3Dマテリアル
-│   │   │   │   └── Shaders/     # カスタムシェーダー
-│   │   │   ├── Audio/
-│   │   │   │   ├── Music/       # BGM・楽曲ファイル
-│   │   │   │   └── SFX/         # 効果音ファイル
-│   │   │   ├── Data/
-│   │   │   │   └── Charts/      # 譜面データ（ScriptableObject）
-│   │   │   ├── Prefabs/
-│   │   │   │   ├── Notes/       # ノーツプレハブ
-│   │   │   │   ├── Effects/     # エフェクトプレハブ
-│   │   │   │   └── Stage/       # ステージプレハブ
-│   │   │   ├── Scenes/          # ゲームシーン
-│   │   │   └── Scripts/
-│   │   │       ├── Core/        # Conductor、チャートデータ等
-│   │   │       ├── Gameplay/    # ノート制御、判定等
-│   │   │       ├── Visual/      # エフェクト、レーン表示等
-│   │   │       └── UI/          # UIマネージャー等
-│   │   ├── Sprites/
-│   │   │   ├── Backgrounds/  # 背景スプライト
-│   │   │   ├── Notes/       # ノーツスプライト（従来）
-│   │   │   └── UI/          # UIスプライト（従来）
-│   │   ├── Timeline/      # Timelineアセット
-│   │   └── UniversalRenderPipelineGlobalSettings.asset
-│   ├── Editor/            # エディタ専用スクリプト
+│   │   │   ├── SampleSceneProfile.asset
+│   │   │   ├── URP-Balanced-Renderer.asset
+│   │   │   ├── URP-Balanced.asset
+│   │   │   ├── URP-HighFidelity-Renderer.asset
+│   │   │   ├── URP-HighFidelity.asset
+│   │   │   ├── URP-Performant-Renderer.asset
+│   │   │   └── URP-Performant.asset
+│   │   └── _Jirou/         # プロジェクト専用アセットフォルダ
+│   │       ├── Art/
+│   │       │   ├── Materials/   # 3Dマテリアル
+│   │       │   ├── Shaders/     # カスタムシェーダー
+│   │       │   └── Sprites/
+│   │       │       ├── Lanes/   # レーンスプライト
+│   │       │       ├── Notes/   # ノーツスプライト
+│   │       │       └── UI/      # UIスプライト
+│   │       ├── Audio/
+│   │       │   ├── Music/       # BGM・楽曲ファイル
+│   │       │   └── SFX/         # 効果音ファイル
+│   │       ├── Data/
+│   │       │   └── Charts/      # 譜面データ（ScriptableObject）
+│   │       ├── Prefabs/
+│   │       │   ├── Effects/     # エフェクトプレハブ
+│   │       │   ├── Notes/       # ノーツプレハブ
+│   │       │   └── Stage/       # ステージプレハブ
+│   │       ├── Scenes/          # ゲームシーン
+│   │       │   └── SampleScene.unity  # メインシーン
+│   │       └── Scripts/
+│   │           ├── Core/        # Conductor、チャートデータ等
+│   │           ├── Gameplay/    # ノート制御、判定等
+│   │           ├── UI/          # UIマネージャー等
+│   │           └── Visual/      # エフェクト、レーン表示等
 │   ├── JirouUnity.sln     # Visual Studioソリューションファイル
 │   ├── Library/           # Unity生成キャッシュ（.gitignoreで除外）
 │   ├── Logs/              # Unity生成ログ（.gitignoreで除外）
@@ -121,10 +102,6 @@ Jirou/
 - Visual Scripting 1.9.7
 
 ### 入力システム設定
-プロジェクトはUnityの新しい入力システムを使用し、以下のアクションマップが事前定義されています：
-- **Player：** 移動、視点操作、攻撃、インタラクト、しゃがみ、ジャンプ、走り、ナビゲーション
-- **UI：** 標準的なUI操作制御
-
 奥行き型リズムゲーム用の入力設定：
 - **D, F, J, Kキー**: 4レーンのノーツ入力
 - **キーボード中心**: メインの操作方式
@@ -132,9 +109,6 @@ Jirou/
 
 対応入力方式：
 - キーボード＆マウス（メイン）
-- ゲームパッド
-- タッチ
-- XRコントローラー
 
 ## 開発コマンド
 
@@ -163,10 +137,11 @@ git commit -m "メッセージ"    # 変更をコミット
 
 ### 現在の状態
 プロジェクトは初期設定段階にあり、以下の状態です：
-- 機能別に整理された空のスクリプトディレクトリ（Gameplay/, Managers/, UI/）
-- SampleSceneを含む基本シーン構造
-- 標準Unity 2D URPテンプレート設定
-- 入力システムは設定済みだが未実装
+- ドキュメント通りのクリーンなディレクトリ構造が構築済み（Assets/_Jirou/, Assets/Settings/のみ）
+- 機能別に整理された空のスクリプトディレクトリ（_Jirou/Scripts/Core/, Gameplay/, Visual/, UI/）
+- SampleSceneを_Jirou/Scenes/に配置した基本シーン構造
+- 3D URPテンプレート設定（Settings/に各種URP設定ファイル）
+- 不要なUnityテンプレートファイル・ディレクトリを削除済み
 
 ### 計画されたアーキテクチャ（奥行き型3Dリズムゲーム）
 `docs/plans/3d-rhythm-game-guide.md`に基づき、以下の奥行き型4レーンリズムゲームとして計画されています：
