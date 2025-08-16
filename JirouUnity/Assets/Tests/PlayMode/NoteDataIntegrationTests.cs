@@ -3,6 +3,7 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
 using Jirou.Core;
+using Jirou.Gameplay;
 
 namespace Jirou.Tests
 {
@@ -83,13 +84,18 @@ namespace Jirou.Tests
             }
             
             // 統計情報の確認
-            int tapActive, tapPooled, holdActive, holdPooled;
-            poolManager.GetPoolStatistics(
-                out tapActive, out tapPooled,
-                out holdActive, out holdPooled);
+            int tapCreated, holdCreated, tapHits, holdHits, tapMisses, holdMisses;
+            poolManager.GetStatistics(
+                out tapCreated, out holdCreated,
+                out tapHits, out holdHits,
+                out tapMisses, out holdMisses);
+            
+            // プールの状態を確認
+            int tapPoolSize, holdPoolSize;
+            poolManager.GetPoolStatus(out tapPoolSize, out holdPoolSize);
                 
-            Assert.AreEqual(0, tapActive, "アクティブなノーツが残っています");
-            Assert.Greater(tapPooled, 0, "プールが空です");
+            Assert.Greater(tapPoolSize, 0, "プールが空です");
+            Assert.AreEqual(100, tapHits, "すべてのノーツがプールから取得されるべきです");
             
             // クリーンアップ
             Object.Destroy(tapPrefab);

@@ -116,6 +116,39 @@ namespace Jirou.Core
         /// 判定ラインのZ座標
         /// </summary>
         public float HitZ => _hitZ;
+        
+        /// <summary>
+        /// 楽曲再生位置（ビート）- 小文字プロパティ名対応
+        /// </summary>
+        public float songPositionInBeats => SongPositionInBeats;
+        
+        /// <summary>
+        /// 楽曲BPM - 小文字プロパティ名対応
+        /// </summary>
+        public float songBpm 
+        { 
+            get => _songBpm; 
+            set => _songBpm = value; 
+        }
+        
+        /// <summary>
+        /// ノーツ生成位置のZ座標 - 小文字プロパティ名対応
+        /// </summary>
+        public float spawnZ => _spawnZ;
+        
+        /// <summary>
+        /// 判定ラインのZ座標 - 小文字プロパティ名対応
+        /// </summary>
+        public float hitZ => _hitZ;
+        
+        /// <summary>
+        /// AudioSource - 小文字プロパティ名対応
+        /// </summary>
+        public AudioSource songSource 
+        { 
+            get => _cachedAudioSource ?? _songSource;
+            set => _songSource = value;
+        }
 
         void Awake()
         {
@@ -282,6 +315,13 @@ namespace Jirou.Core
         private void InitializeComponents()
         {
             _cachedAudioSource = _songSource != null ? _songSource : GetComponent<AudioSource>();
+            
+            // AudioSourceが見つからない場合は自動的に追加
+            if (_cachedAudioSource == null)
+            {
+                _cachedAudioSource = gameObject.AddComponent<AudioSource>();
+                Debug.LogWarning("[Conductor] AudioSourceが見つからなかったため、自動的に追加しました。");
+            }
         }
         
         /// <summary>

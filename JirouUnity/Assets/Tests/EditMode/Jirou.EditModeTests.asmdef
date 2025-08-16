@@ -1,6 +1,6 @@
 {
     "name": "Jirou.EditModeTests",
-    "rootNamespace": "Jirou.Tests.EditMode",
+    "rootNamespace": "Jirou.Tests",
     "references": [
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",

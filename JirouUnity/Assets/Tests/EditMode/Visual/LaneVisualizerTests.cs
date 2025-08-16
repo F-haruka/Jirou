@@ -3,7 +3,7 @@ using UnityEngine;
 using Jirou.Visual;
 using Jirou.Core;
 
-namespace Jirou.Tests.EditMode.Visual
+namespace Jirou.Tests
 {
     /// <summary>
     /// LaneVisualizerのユニットテスト

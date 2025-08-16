@@ -1,7 +1,7 @@
 using UnityEngine;
 using Jirou.Core;
 
-namespace Jirou.Tests.EditMode
+namespace Jirou.Tests
 {
     /// <summary>
     /// エディタモードテスト用のヘルパークラス
