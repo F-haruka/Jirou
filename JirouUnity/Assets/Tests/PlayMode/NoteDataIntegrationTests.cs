@@ -13,17 +13,16 @@ namespace Jirou.Tests
         {
             // 大量ノーツの譜面を作成
             var chart = ScriptableObject.CreateInstance<ChartData>();
-            chart.bpm = 180f;
             
             // 1000個のノーツを追加
             for (int i = 0; i < 1000; i++)
             {
-                chart.notes.Add(new NoteData
+                chart.Notes.Add(new NoteData
                 {
-                    noteType = i % 5 == 0 ? NoteType.Hold : NoteType.Tap,
-                    laneIndex = i % 4,
-                    timeToHit = i * 0.25f,
-                    holdDuration = 1.0f
+                    NoteType = i % 5 == 0 ? NoteType.Hold : NoteType.Tap,
+                    LaneIndex = i % 4,
+                    TimeToHit = i * 0.25f,
+                    HoldDuration = 1.0f
                 });
             }
             
@@ -57,9 +56,9 @@ namespace Jirou.Tests
             
             // リフレクションを使ってプライベートフィールドを設定
             var poolManagerType = poolManager.GetType();
-            var tapField = poolManagerType.GetField("tapNotePrefab", 
+            var tapField = poolManagerType.GetField("_tapNotePrefab", 
                 System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-            var holdField = poolManagerType.GetField("holdNotePrefab", 
+            var holdField = poolManagerType.GetField("_holdNotePrefab", 
                 System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
             
             if (tapField != null) tapField.SetValue(poolManager, tapPrefab);
@@ -106,17 +105,20 @@ namespace Jirou.Tests
             // Conductorのモック
             GameObject conductorObject = new GameObject("TestConductor");
             var conductor = conductorObject.AddComponent<Conductor>();
-            conductor.songBpm = 120f;
-            conductor.noteSpeed = 10f;
-            conductor.spawnZ = 20f;
+            var bpmField = typeof(Conductor).GetField("_songBpm", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            var speedField = typeof(Conductor).GetField("_noteSpeed", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            var spawnField = typeof(Conductor).GetField("_spawnZ", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            bpmField?.SetValue(conductor, 120f);
+            speedField?.SetValue(conductor, 10f);
+            spawnField?.SetValue(conductor, 20f);
             
             yield return null;
             
             // ノーツデータ
             var noteData = new NoteData
             {
-                laneIndex = 1,
-                timeToHit = 2.0f
+                LaneIndex = 1,
+                TimeToHit = 2.0f
             };
             
             // 位置計算テスト
@@ -125,13 +127,13 @@ namespace Jirou.Tests
             yield return new WaitForSeconds(0.5f);
             
             Vector3 notePos = NoteVisualCalculator.CalculateNoteWorldPosition(
-                noteData, conductor.songPositionInBeats, conductor);
+                noteData, conductor.SongPositionInBeats, conductor);
                 
             // X座標の確認（レーン1）
             Assert.AreEqual(-1f, notePos.x, 0.01f);
             
             // Z座標が移動していることを確認
-            Assert.Less(notePos.z, conductor.spawnZ);
+            Assert.Less(notePos.z, conductor.SpawnZ);
             
             Object.Destroy(conductorObject);
         }
@@ -141,29 +143,27 @@ namespace Jirou.Tests
         {
             // テスト用のChartDataを作成
             var chart = ScriptableObject.CreateInstance<ChartData>();
-            chart.songName = "Test Song";
-            chart.bpm = 120f;
             
             // 順序がバラバラなノーツを追加
-            chart.notes.Add(new NoteData { laneIndex = 2, timeToHit = 8f });
-            chart.notes.Add(new NoteData { laneIndex = 0, timeToHit = 2f });
-            chart.notes.Add(new NoteData { laneIndex = 3, timeToHit = 16f });
-            chart.notes.Add(new NoteData { laneIndex = 1, timeToHit = 4f });
-            chart.notes.Add(new NoteData 
+            chart.Notes.Add(new NoteData { LaneIndex = 2, TimeToHit = 8f });
+            chart.Notes.Add(new NoteData { LaneIndex = 0, TimeToHit = 2f });
+            chart.Notes.Add(new NoteData { LaneIndex = 3, TimeToHit = 16f });
+            chart.Notes.Add(new NoteData { LaneIndex = 1, TimeToHit = 4f });
+            chart.Notes.Add(new NoteData 
             { 
-                noteType = NoteType.Hold, 
-                laneIndex = 0, 
-                timeToHit = 12f,
-                holdDuration = 2f 
+                NoteType = NoteType.Hold, 
+                LaneIndex = 0, 
+                TimeToHit = 12f,
+                HoldDuration = 2f 
             });
             
             // ソート実行
             chart.SortNotesByTime();
             
             // ソート順の確認
-            for (int i = 0; i < chart.notes.Count - 1; i++)
+            for (int i = 0; i < chart.Notes.Count - 1; i++)
             {
-                Assert.LessOrEqual(chart.notes[i].timeToHit, chart.notes[i + 1].timeToHit,
+                Assert.LessOrEqual(chart.Notes[i].TimeToHit, chart.Notes[i + 1].TimeToHit,
                     $"ソート順が不正: インデックス{i}と{i+1}");
             }
             
@@ -194,14 +194,14 @@ namespace Jirou.Tests
                 
                 // X座標の確認
                 float expectedX = NoteData.LaneXPositions[lane];
-                Assert.AreEqual(expectedX, position.x, 0.001f,
+                Assert.AreEqual(expectedX, position.X, 0.001f,
                     $"レーン{lane}のX座標が不正");
                 
                 // Y座標の確認
-                Assert.AreEqual(0.5f, position.y, 0.001f);
+                Assert.AreEqual(0.5f, position.Y, 0.001f);
                 
                 // Z座標の確認
-                Assert.AreEqual(10f, position.z, 0.001f);
+                Assert.AreEqual(10f, position.Z, 0.001f);
                 
                 // Vector3変換の確認
                 Vector3 vec = position.ToVector3();

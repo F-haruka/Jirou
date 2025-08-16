@@ -138,7 +138,9 @@ namespace Jirou.Tests.PlayMode
             // Conductorオブジェクトを作成
             var conductorObject = new GameObject("TestConductor");
             var conductor = conductorObject.AddComponent<Conductor>();
-            conductor.songBpm = 120f;
+            // Conductorのフィールドはprivateなのでリフレクションを使用
+            var bpmField = typeof(Conductor).GetField("_songBpm", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            bpmField?.SetValue(conductor, 120f);
             
             yield return null;
             
@@ -146,7 +148,7 @@ namespace Jirou.Tests.PlayMode
             conductor.ChangeBPM(140f);
             
             // BPMが更新されていることを確認
-            Assert.AreEqual(140f, conductor.songBpm);
+            Assert.AreEqual(140f, conductor.SongBpm);
             
             Object.Destroy(conductorObject);
         }
@@ -157,14 +159,19 @@ namespace Jirou.Tests.PlayMode
             // Conductorオブジェクトを作成
             var conductorObject = new GameObject("TestConductor");
             var conductor = conductorObject.AddComponent<Conductor>();
-            conductor.songBpm = 120f;
-            conductor.noteSpeed = 10f;
-            conductor.spawnZ = 20f;
+            // Conductorのフィールドを設定
+            var bpmField = typeof(Conductor).GetField("_songBpm", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            var speedField = typeof(Conductor).GetField("_noteSpeed", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            var spawnField = typeof(Conductor).GetField("_spawnZ", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            bpmField?.SetValue(conductor, 120f);
+            speedField?.SetValue(conductor, 10f);
+            spawnField?.SetValue(conductor, 20f);
             
             // AudioSourceをモック
             var audioSource = conductorObject.AddComponent<AudioSource>();
             audioSource.clip = AudioClip.Create("TestClip", 44100, 1, 44100, false);
-            conductor.songSource = audioSource;
+            var sourceField = typeof(Conductor).GetField("_songSource", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            sourceField?.SetValue(conductor, audioSource);
             
             yield return null;
             
@@ -184,7 +191,8 @@ namespace Jirou.Tests.PlayMode
             // Conductorオブジェクトを作成
             var conductorObject = new GameObject("TestConductor");
             var conductor = conductorObject.AddComponent<Conductor>();
-            conductor.songBpm = 120f;
+            var bpmField = typeof(Conductor).GetField("_songBpm", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            bpmField?.SetValue(conductor, 120f);
             
             yield return null;
             
@@ -205,7 +213,8 @@ namespace Jirou.Tests.PlayMode
             // Conductorオブジェクトを作成
             var conductorObject = new GameObject("TestConductor");
             var conductor = conductorObject.AddComponent<Conductor>();
-            conductor.hitZ = 0f;
+            var hitZField = typeof(Conductor).GetField("_hitZ", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            hitZField?.SetValue(conductor, 0f);
             
             yield return null;
             
@@ -223,7 +232,8 @@ namespace Jirou.Tests.PlayMode
             // Conductorオブジェクトを作成
             var conductorObject = new GameObject("TestConductor");
             var conductor = conductorObject.AddComponent<Conductor>();
-            conductor.songBpm = 120f; // 1ビート = 0.5秒
+            var bpmField = typeof(Conductor).GetField("_songBpm", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            bpmField?.SetValue(conductor, 120f); // 1ビート = 0.5秒
             
             yield return null;
             
@@ -268,16 +278,17 @@ namespace Jirou.Tests.PlayMode
             // Conductorオブジェクトを作成
             var conductorObject = new GameObject("TestConductor");
             var conductor = conductorObject.AddComponent<Conductor>();
-            conductor.songBpm = 120f;
+            var bpmField = typeof(Conductor).GetField("_songBpm", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            bpmField?.SetValue(conductor, 120f);
             
             yield return null;
             
             // 無効なBPMを設定してもエラーにならない
             conductor.ChangeBPM(0f);
-            Assert.AreEqual(120f, conductor.songBpm); // 変更されない
+            Assert.AreEqual(120f, conductor.SongBpm); // 変更されない
             
             conductor.ChangeBPM(-100f);
-            Assert.AreEqual(120f, conductor.songBpm); // 変更されない
+            Assert.AreEqual(120f, conductor.SongBpm); // 変更されない
             
             Object.Destroy(conductorObject);
         }
