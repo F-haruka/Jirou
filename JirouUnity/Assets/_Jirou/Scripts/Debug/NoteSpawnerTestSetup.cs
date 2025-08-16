@@ -73,6 +73,13 @@ namespace Jirou.Testing
             CreateTestPrefabs();
             
             Debug.Log("[NoteSpawnerTestSetup] テスト環境のセットアップ完了");
+            Debug.Log($"[NoteSpawnerTestSetup] tapNotePrefab is null: {noteSpawner.tapNotePrefab == null}");
+            Debug.Log($"[NoteSpawnerTestSetup] holdNotePrefab is null: {noteSpawner.holdNotePrefab == null}");
+            Debug.Log($"[NoteSpawnerTestSetup] chartData is null: {noteSpawner.chartData == null}");
+            if (noteSpawner.chartData != null)
+            {
+                Debug.Log($"[NoteSpawnerTestSetup] chartData.Notes.Count: {noteSpawner.chartData.Notes.Count}");
+            }
             
             // 6. セットアップ完了後、NoteSpawnerを開始
             if (noteSpawner != null && conductor != null)
@@ -311,8 +318,8 @@ namespace Jirou.Testing
                 collider.isTrigger = true;
             }
             
-            // プレハブを非アクティブ化（プール用）
-            prefab.SetActive(false);
+            // プレハブはアクティブ状態のままにする（Instantiate時にアクティブなオブジェクトが生成される）
+            // プール管理は各インスタンスで行う
             
             return prefab;
         }

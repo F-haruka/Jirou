@@ -15,7 +15,7 @@ MonoBehaviour:
   _songClip: {fileID: 8300000, guid: 5c408122a2ae0aa4e9dab103b7b7adc4, type: 3}
   _bpm: 180
   _songName: End Time
-  _artist: Cres
+  _artist: aaa
   _previewTime: 0
   _firstBeatOffset: 0
   _difficulty: 1
