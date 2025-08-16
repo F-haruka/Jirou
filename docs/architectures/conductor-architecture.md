@@ -246,3 +246,5 @@ Z(t) = Z_spawn - (Beat_current - Beat_note) × Speed
 ## まとめ
 
 Conductorクラスは、Jirouの音楽同期システムの基盤として、高精度なタイミング管理と奥行き型ノーツ移動の計算を提供します。`AudioSettings.dspTime`を使用することで、フレームレートに依存しない安定した音楽同期を実現し、プレイヤーに快適なリズムゲーム体験を提供します。
+
+
