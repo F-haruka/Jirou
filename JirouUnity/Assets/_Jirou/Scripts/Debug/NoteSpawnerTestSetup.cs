@@ -33,12 +33,18 @@ namespace Jirou.Testing
         public NoteSpawner noteSpawner;
         public NotePoolManager notePoolManager;
         
-        void Start()
+        void Awake()
         {
+            // AwakeでセットアップすることでNoteSpawnerのStart()より先に実行される
             if (autoSetup)
             {
                 SetupTestEnvironment();
             }
+        }
+        
+        void Start()
+        {
+            // Start()では何もしない（既にAwakeで処理済み）
         }
         
         /// <summary>
@@ -67,6 +73,22 @@ namespace Jirou.Testing
             CreateTestPrefabs();
             
             Debug.Log("[NoteSpawnerTestSetup] テスト環境のセットアップ完了");
+            
+            // 6. セットアップ完了後、NoteSpawnerを開始
+            if (noteSpawner != null && conductor != null)
+            {
+                // ConductorのAudioSourceがEnd_Time.wavに設定されているか確認
+                AudioSource audioSource = conductor.GetComponent<AudioSource>();
+                if (audioSource != null && audioSource.clip != null)
+                {
+                    Debug.Log($"[NoteSpawnerTestSetup] AudioClip '{audioSource.clip.name}' で楽曲を開始します");
+                    noteSpawner.StartSpawning();
+                }
+                else
+                {
+                    Debug.LogError("[NoteSpawnerTestSetup] AudioClipが設定されていないため、楽曲を開始できません");
+                }
+            }
         }
         
         /// <summary>
@@ -88,16 +110,40 @@ namespace Jirou.Testing
                 {
                     conductor = conductorGO.AddComponent<Conductor>();
                 }
-                
-                // AudioSourceの追加
-                AudioSource audioSource = conductorGO.GetComponent<AudioSource>();
-                if (audioSource == null)
-                {
-                    audioSource = conductorGO.AddComponent<AudioSource>();
-                }
-                
-                Debug.Log("[NoteSpawnerTestSetup] Conductorをセットアップしました");
             }
+            
+            // AudioSourceの追加または取得
+            AudioSource audioSource = conductor.GetComponent<AudioSource>();
+            if (audioSource == null)
+            {
+                audioSource = conductor.gameObject.AddComponent<AudioSource>();
+            }
+            
+            // End_Time.wavをAudioClipとして常に設定（既存のclipがあっても上書き）
+            #if UNITY_EDITOR
+            // エディタモードでAssetDatabaseを使用してロード
+            AudioClip endTimeClip = UnityEditor.AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/_Jirou/Audio/Music/End_Time.wav");
+            
+            if (endTimeClip != null)
+            {
+                audioSource.clip = endTimeClip;
+                audioSource.playOnAwake = false; // 自動再生を無効化
+                audioSource.loop = false; // ループを無効化
+                Debug.Log($"[NoteSpawnerTestSetup] End_Time.wav({endTimeClip.length}秒)をAudioClipとして設定しました");
+            }
+            else
+            {
+                Debug.LogError("[NoteSpawnerTestSetup] End_Time.wavが見つかりませんでした。パスを確認してください: Assets/_Jirou/Audio/Music/End_Time.wav");
+            }
+            #else
+            // ビルド時はResourcesフォルダからロード（必要に応じて）
+            Debug.LogWarning("[NoteSpawnerTestSetup] ビルド環境では、End_Time.wavをResourcesフォルダに配置するか、別の方法でロードしてください");
+            #endif
+            
+            // BPMを180に設定（End_Time.wavに合わせて）
+            conductor.songBpm = 180f;
+            
+            Debug.Log($"[NoteSpawnerTestSetup] Conductorをセットアップしました (BPM: {conductor.songBpm})");
         }
         
         /// <summary>
@@ -302,16 +348,23 @@ namespace Jirou.Testing
                 return;
             }
             
-            // ダミーのAudioClipを作成（無音）
-            int sampleRate = 44100;
-            int sampleLength = sampleRate * 30; // 30秒の無音
-            AudioClip dummyClip = AudioClip.Create("DummyClip", sampleLength, 1, sampleRate, false);
-            
-            // AudioSourceに設定
             AudioSource audioSource = conductor.GetComponent<AudioSource>();
             if (audioSource != null)
             {
-                audioSource.clip = dummyClip;
+                // 既にAudioClipが設定されていない場合のみダミーを作成
+                if (audioSource.clip == null)
+                {
+                    // ダミーのAudioClipを作成（無音）
+                    int sampleRate = 44100;
+                    int sampleLength = sampleRate * 30; // 30秒の無音
+                    AudioClip dummyClip = AudioClip.Create("DummyClip", sampleLength, 1, sampleRate, false);
+                    audioSource.clip = dummyClip;
+                    Debug.Log("[NoteSpawnerTestSetup] ダミーのAudioClipを作成しました（既存のクリップが無かったため）");
+                }
+                else
+                {
+                    Debug.Log($"[NoteSpawnerTestSetup] 既存のAudioClip '{audioSource.clip.name}' ({audioSource.clip.length}秒) を使用します");
+                }
             }
             
             Debug.Log("[NoteSpawnerTestSetup] テスト開始 - NoteSpawnerが動作を開始します");
