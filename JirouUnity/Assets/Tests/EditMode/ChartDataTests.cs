@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using NUnit.Framework;
 using UnityEngine;
 
@@ -10,20 +11,34 @@ namespace Jirou.Tests.EditMode
     /// </summary>
     public class ChartDataTests
     {
+        /// <summary>
+        /// リフレクションを使用してプライベートフィールドを設定
+        /// </summary>
+        private void SetPrivateField(object obj, string fieldName, object value)
+        {
+            var field = obj.GetType().GetField(fieldName, BindingFlags.NonPublic | BindingFlags.Instance);
+            if (field != null)
+            {
+                field.SetValue(obj, value);
+            }
+        }
+        
         private Core.ChartData CreateTestChart()
         {
             var chart = ScriptableObject.CreateInstance<Core.ChartData>();
-            chart.bpm = 120f;
-            chart.songName = "Test Song";
-            chart.artist = "Test Artist";
-            chart.difficulty = 5;
-            chart.difficultyName = "Normal";
+            
+            // リフレクションを使用してプライベートフィールドを設定
+            SetPrivateField(chart, "_bpm", 120f);
+            SetPrivateField(chart, "_songName", "Test Song");
+            SetPrivateField(chart, "_artist", "Test Artist");
+            SetPrivateField(chart, "_difficulty", 5);
+            SetPrivateField(chart, "_difficultyName", "Normal");
             
             // テスト用ノーツを追加
-            chart.notes.Add(new Core.NoteData { laneIndex = 0, timeToHit = 0f });
-            chart.notes.Add(new Core.NoteData { laneIndex = 1, timeToHit = 1f });
-            chart.notes.Add(new Core.NoteData { laneIndex = 2, timeToHit = 2f });
-            chart.notes.Add(new Core.NoteData { laneIndex = 3, timeToHit = 3f });
+            chart.Notes.Add(new Core.NoteData { LaneIndex = 0, TimeToHit = 0f });
+            chart.Notes.Add(new Core.NoteData { LaneIndex = 1, TimeToHit = 1f });
+            chart.Notes.Add(new Core.NoteData { LaneIndex = 2, TimeToHit = 2f });
+            chart.Notes.Add(new Core.NoteData { LaneIndex = 3, TimeToHit = 3f });
             
             return chart;
         }
@@ -35,13 +50,13 @@ namespace Jirou.Tests.EditMode
             var chart = ScriptableObject.CreateInstance<Core.ChartData>();
             
             // Assert
-            Assert.AreEqual(120f, chart.bpm, "デフォルトBPMは120");
-            Assert.AreEqual("無題", chart.songName, "デフォルト曲名は'無題'");
-            Assert.AreEqual("不明", chart.artist, "デフォルトアーティスト名は'不明'");
-            Assert.AreEqual(1, chart.difficulty, "デフォルト難易度は1");
-            Assert.AreEqual("Normal", chart.difficultyName, "デフォルト難易度名は'Normal'");
-            Assert.IsNotNull(chart.notes, "ノーツリストは初期化されているべき");
-            Assert.AreEqual(0, chart.notes.Count, "初期状態ではノーツは0個");
+            Assert.AreEqual(120f, chart.Bpm, "デフォルトBPMは120");
+            Assert.AreEqual("無題", chart.SongName, "デフォルト曲名は'無題'");
+            Assert.AreEqual("不明", chart.Artist, "デフォルトアーティスト名は'不明'");
+            Assert.AreEqual(1, chart.Difficulty, "デフォルト難易度は1");
+            Assert.AreEqual("Normal", chart.DifficultyName, "デフォルト難易度名は'Normal'");
+            Assert.IsNotNull(chart.Notes, "ノーツリストは初期化されているべき");
+            Assert.AreEqual(0, chart.Notes.Count, "初期状態ではノーツは0個");
         }
         
         [Test]
@@ -51,19 +66,19 @@ namespace Jirou.Tests.EditMode
             var chart = CreateTestChart();
             
             // 順序を意図的に乱す
-            var temp = chart.notes[0];
-            chart.notes[0] = chart.notes[3];
-            chart.notes[3] = temp;
+            var temp = chart.Notes[0];
+            chart.Notes[0] = chart.Notes[3];
+            chart.Notes[3] = temp;
             
             // Act
             chart.SortNotesByTime();
             
             // Assert
-            for (int i = 0; i < chart.notes.Count - 1; i++)
+            for (int i = 0; i < chart.Notes.Count - 1; i++)
             {
                 Assert.LessOrEqual(
-                    chart.notes[i].timeToHit,
-                    chart.notes[i + 1].timeToHit,
+                    chart.Notes[i].TimeToHit,
+                    chart.Notes[i + 1].TimeToHit,
                     $"ノーツ[{i}]はノーツ[{i + 1}]より前にあるべき");
             }
         }
@@ -79,8 +94,8 @@ namespace Jirou.Tests.EditMode
             
             // Assert
             Assert.AreEqual(2, filtered.Count, "範囲内のノーツは2個");
-            Assert.AreEqual(1f, filtered[0].timeToHit, "最初のノーツは1ビート");
-            Assert.AreEqual(2f, filtered[1].timeToHit, "2番目のノーツは2ビート");
+            Assert.AreEqual(1f, filtered[0].TimeToHit, "最初のノーツは1ビート");
+            Assert.AreEqual(2f, filtered[1].TimeToHit, "2番目のノーツは2ビート");
         }
         
         [Test]
@@ -101,8 +116,8 @@ namespace Jirou.Tests.EditMode
         {
             // Arrange
             var chart = CreateTestChart();
-            chart.notes.Add(new Core.NoteData { laneIndex = 0, timeToHit = 4f });
-            chart.notes.Add(new Core.NoteData { laneIndex = 0, timeToHit = 5f });
+            chart.Notes.Add(new Core.NoteData { LaneIndex = 0, TimeToHit = 4f });
+            chart.Notes.Add(new Core.NoteData { LaneIndex = 0, TimeToHit = 5f });
             
             // Act
             var counts = chart.GetNoteCountByLane();
@@ -132,19 +147,19 @@ namespace Jirou.Tests.EditMode
         {
             // Arrange
             var chart = CreateTestChart();
-            chart.notes.Add(new Core.NoteData 
+            chart.Notes.Add(new Core.NoteData 
             { 
-                noteType = Core.NoteType.Hold, 
-                laneIndex = 1, 
-                timeToHit = 4f,
-                holdDuration = 2f
+                NoteType = Core.NoteType.Hold, 
+                LaneIndex = 1, 
+                TimeToHit = 4f,
+                HoldDuration = 2f
             });
-            chart.notes.Add(new Core.NoteData 
+            chart.Notes.Add(new Core.NoteData 
             { 
-                noteType = Core.NoteType.Hold, 
-                laneIndex = 2, 
-                timeToHit = 6f,
-                holdDuration = 1f
+                NoteType = Core.NoteType.Hold, 
+                LaneIndex = 2, 
+                TimeToHit = 6f,
+                HoldDuration = 1f
             });
             
             // Act
@@ -159,12 +174,12 @@ namespace Jirou.Tests.EditMode
         {
             // Arrange
             var chart = CreateTestChart();  // デフォルトで4個のTapノーツ
-            chart.notes.Add(new Core.NoteData 
+            chart.Notes.Add(new Core.NoteData 
             { 
-                noteType = Core.NoteType.Hold, 
-                laneIndex = 1, 
-                timeToHit = 4f,
-                holdDuration = 2f
+                NoteType = Core.NoteType.Hold, 
+                LaneIndex = 1, 
+                TimeToHit = 4f,
+                HoldDuration = 2f
             });
             
             // Act
@@ -181,12 +196,12 @@ namespace Jirou.Tests.EditMode
             var chart = CreateTestChart();
             
             // Holdノーツを追加
-            chart.notes.Add(new Core.NoteData
+            chart.Notes.Add(new Core.NoteData
             {
-                noteType = Core.NoteType.Hold,
-                laneIndex = 0,
-                timeToHit = 4f,
-                holdDuration = 2f
+                NoteType = Core.NoteType.Hold,
+                LaneIndex = 0,
+                TimeToHit = 4f,
+                HoldDuration = 2f
             });
             
             // Act
@@ -214,7 +229,7 @@ namespace Jirou.Tests.EditMode
         {
             // Arrange
             var chart = CreateTestChart();
-            chart.bpm = 120f;  // 120 BPM = 2ビート/秒
+            // BPMは120fに設定済み（CreateTestChart内で）
             
             // Act
             float lengthInSeconds = chart.GetChartLengthInSeconds();
@@ -227,8 +242,8 @@ namespace Jirou.Tests.EditMode
         public void ChartData_GetChartLengthInSeconds_HandlesZeroBPM()
         {
             // Arrange
-            var chart = CreateTestChart();
-            chart.bpm = 0f;
+            var chart = ScriptableObject.CreateInstance<Core.ChartData>();
+            SetPrivateField(chart, "_bpm", 0f);
             
             // Act
             float length = chart.GetChartLengthInSeconds();
@@ -242,7 +257,7 @@ namespace Jirou.Tests.EditMode
         {
             // Arrange
             var chart = CreateTestChart();
-            chart.songClip = AudioClip.Create("test", 44100, 1, 44100, false);
+            SetPrivateField(chart, "_songClip", AudioClip.Create("test", 44100, 1, 44100, false));
             
             // Act
             List<string> errors;
@@ -260,7 +275,7 @@ namespace Jirou.Tests.EditMode
             var chart = CreateTestChart();
             
             // Act & Assert - 負のBPM
-            chart.bpm = -1f;
+            SetPrivateField(chart, "_bpm", -1f);
             List<string> errors;
             bool isValid = chart.ValidateChart(out errors);
             
@@ -268,7 +283,7 @@ namespace Jirou.Tests.EditMode
             Assert.IsTrue(errors.Any(e => e.Contains("BPM")), "エラーにBPMが含まれるべき");
             
             // Act & Assert - 極端に大きいBPM
-            chart.bpm = 1000f;
+            SetPrivateField(chart, "_bpm", 1000f);
             isValid = chart.ValidateChart(out errors);
             
             Assert.IsFalse(isValid, "BPM1000は無効");
@@ -280,7 +295,7 @@ namespace Jirou.Tests.EditMode
         {
             // Arrange
             var chart = CreateTestChart();
-            chart.songClip = null;
+            SetPrivateField(chart, "_songClip", null);
             
             // Act
             List<string> errors;
@@ -296,7 +311,7 @@ namespace Jirou.Tests.EditMode
         {
             // Arrange
             var chart = CreateTestChart();
-            chart.songName = "";
+            SetPrivateField(chart, "_songName", "");
             
             // Act
             List<string> errors;
@@ -314,7 +329,7 @@ namespace Jirou.Tests.EditMode
             var chart = CreateTestChart();
             
             // 同じレーン、同じタイミングのノーツを追加
-            chart.notes.Add(new Core.NoteData { laneIndex = 0, timeToHit = 0f });
+            chart.Notes.Add(new Core.NoteData { LaneIndex = 0, TimeToHit = 0f });
             
             // Act
             List<string> errors;
@@ -330,12 +345,12 @@ namespace Jirou.Tests.EditMode
         {
             // Arrange
             var chart = CreateTestChart();
-            chart.notes.Add(new Core.NoteData 
+            chart.Notes.Add(new Core.NoteData 
             { 
-                noteType = Core.NoteType.Hold,
-                laneIndex = 0,
-                timeToHit = 4f,
-                holdDuration = 2f
+                NoteType = Core.NoteType.Hold,
+                LaneIndex = 0,
+                TimeToHit = 4f,
+                HoldDuration = 2f
             });
             
             // Act

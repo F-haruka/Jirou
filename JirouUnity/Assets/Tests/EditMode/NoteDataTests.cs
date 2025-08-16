@@ -15,14 +15,14 @@ namespace Jirou.Tests.EditMode
             var note = new Core.NoteData();
             
             // Assert
-            Assert.AreEqual(Core.NoteType.Tap, note.noteType, "デフォルトのノートタイプはTapであるべき");
-            Assert.AreEqual(0, note.laneIndex, "デフォルトのレーンインデックスは0であるべき");
-            Assert.AreEqual(0f, note.timeToHit, "デフォルトのタイミングは0であるべき");
-            Assert.AreEqual(0f, note.holdDuration, "デフォルトのホールド長は0であるべき");
-            Assert.AreEqual(1.0f, note.visualScale, "デフォルトのスケールは1.0であるべき");
-            Assert.AreEqual(Color.white, note.noteColor, "デフォルトの色は白であるべき");
-            Assert.AreEqual(100, note.baseScore, "デフォルトの基本スコアは100であるべき");
-            Assert.AreEqual(1.0f, note.scoreMultiplier, "デフォルトのスコア倍率は1.0であるべき");
+            Assert.AreEqual(Core.NoteType.Tap, note.NoteType, "デフォルトのノートタイプはTapであるべき");
+            Assert.AreEqual(0, note.LaneIndex, "デフォルトのレーンインデックスは0であるべき");
+            Assert.AreEqual(0f, note.TimeToHit, "デフォルトのタイミングは0であるべき");
+            Assert.AreEqual(0f, note.HoldDuration, "デフォルトのホールド長は0であるべき");
+            Assert.AreEqual(1.0f, note.VisualScale, "デフォルトのスケールは1.0であるべき");
+            Assert.AreEqual(Color.white, note.NoteColor, "デフォルトの色は白であるべき");
+            Assert.AreEqual(100, note.BaseScore, "デフォルトの基本スコアは100であるべき");
+            Assert.AreEqual(1.0f, note.ScoreMultiplier, "デフォルトのスコア倍率は1.0であるべき");
         }
         
         [Test]
@@ -35,7 +35,7 @@ namespace Jirou.Tests.EditMode
             // Act & Assert
             for (int i = 0; i < 4; i++)
             {
-                note.laneIndex = i;
+                note.LaneIndex = i;
                 float actualPosition = note.GetLaneXPosition();
                 Assert.AreEqual(expectedPositions[i], actualPosition, 
                     $"レーン{i}のX座標は{expectedPositions[i]}であるべき");
@@ -49,10 +49,10 @@ namespace Jirou.Tests.EditMode
             var note = new Core.NoteData();
             
             // Act & Assert - 無効なインデックスの場合
-            note.laneIndex = -1;
+            note.LaneIndex = -1;
             Assert.AreEqual(0f, note.GetLaneXPosition(), "無効なレーンインデックスでは0を返すべき");
             
-            note.laneIndex = 4;
+            note.LaneIndex = 4;
             Assert.AreEqual(0f, note.GetLaneXPosition(), "無効なレーンインデックスでは0を返すべき");
         }
         
@@ -62,9 +62,9 @@ namespace Jirou.Tests.EditMode
             // Arrange
             var tapNote = new Core.NoteData
             {
-                noteType = Core.NoteType.Tap,
-                timeToHit = 4.0f,
-                holdDuration = 2.0f  // Tapノーツでは無視される
+                NoteType = Core.NoteType.Tap,
+                TimeToHit = 4.0f,
+                HoldDuration = 2.0f  // Tapノーツでは無視される
             };
             
             // Act
@@ -80,9 +80,9 @@ namespace Jirou.Tests.EditMode
             // Arrange
             var holdNote = new Core.NoteData
             {
-                noteType = Core.NoteType.Hold,
-                timeToHit = 4.0f,
-                holdDuration = 2.0f
+                NoteType = Core.NoteType.Hold,
+                TimeToHit = 4.0f,
+                HoldDuration = 2.0f
             };
             
             // Act
@@ -98,10 +98,10 @@ namespace Jirou.Tests.EditMode
             // Arrange
             var note = new Core.NoteData
             {
-                noteType = Core.NoteType.Tap,
-                laneIndex = 2,
-                timeToHit = 1.0f,
-                visualScale = 1.0f
+                NoteType = Core.NoteType.Tap,
+                LaneIndex = 2,
+                TimeToHit = 1.0f,
+                VisualScale = 1.0f
             };
             
             // Act
@@ -121,12 +121,12 @@ namespace Jirou.Tests.EditMode
             string error;
             
             // Act & Assert - 負の値
-            note.laneIndex = -1;
+            note.LaneIndex = -1;
             Assert.IsFalse(note.Validate(out error), "負のレーンインデックスは無効");
             Assert.IsTrue(error.Contains("レーンインデックス"), "エラーメッセージにレーンインデックスが含まれるべき");
             
             // Act & Assert - 範囲外
-            note.laneIndex = 4;
+            note.LaneIndex = 4;
             Assert.IsFalse(note.Validate(out error), "レーンインデックス4は無効");
             Assert.IsTrue(error.Contains("レーンインデックス"), "エラーメッセージにレーンインデックスが含まれるべき");
         }
@@ -137,9 +137,9 @@ namespace Jirou.Tests.EditMode
             // Arrange
             var note = new Core.NoteData
             {
-                laneIndex = 0,
-                timeToHit = -1.0f,
-                visualScale = 1.0f
+                LaneIndex = 0,
+                TimeToHit = -1.0f,
+                VisualScale = 1.0f
             };
             
             // Act
@@ -157,11 +157,11 @@ namespace Jirou.Tests.EditMode
             // Arrange
             var note = new Core.NoteData
             {
-                noteType = Core.NoteType.Hold,
-                laneIndex = 0,
-                timeToHit = 1.0f,
-                holdDuration = 0f,  // Holdノーツでは0は無効
-                visualScale = 1.0f
+                NoteType = Core.NoteType.Hold,
+                LaneIndex = 0,
+                TimeToHit = 1.0f,
+                HoldDuration = 0f,  // Holdノーツでは0は無効
+                VisualScale = 1.0f
             };
             
             // Act
@@ -179,17 +179,25 @@ namespace Jirou.Tests.EditMode
             // Arrange
             var note = new Core.NoteData
             {
-                laneIndex = 0,
-                timeToHit = 1.0f,
-                visualScale = 0f  // 0以下は無効
+                LaneIndex = 0,
+                TimeToHit = 1.0f
             };
             
-            // Act
+            // プロパティのセッターがクランプするため、リフレクションで直接フィールドを設定
+            var visualScaleField = typeof(Core.NoteData).GetField("_visualScale", 
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            
+            // Act & Assert - 範囲下限チェック（0.5未満）
+            visualScaleField.SetValue(note, 0.4f);
             string error;
             bool isValid = note.Validate(out error);
+            Assert.IsFalse(isValid, "スケール0.4は無効");
+            Assert.IsTrue(error.Contains("スケール"), "エラーメッセージにスケールが含まれるべき");
             
-            // Assert
-            Assert.IsFalse(isValid, "スケール0は無効");
+            // Act & Assert - 範囲上限チェック（2.0超過）
+            visualScaleField.SetValue(note, 2.1f);
+            isValid = note.Validate(out error);
+            Assert.IsFalse(isValid, "スケール2.1は無効");
             Assert.IsTrue(error.Contains("スケール"), "エラーメッセージにスケールが含まれるべき");
         }
         

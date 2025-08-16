@@ -11,7 +11,7 @@ namespace Jirou.Core
     public class Conductor : MonoBehaviour
     {
         // シングルトンインスタンス
-        private static Conductor instance;
+        private static Conductor _instance;
         
         /// <summary>
         /// Conductorのシングルトンインスタンス
@@ -20,90 +20,114 @@ namespace Jirou.Core
         {
             get
             {
-                if (instance == null)
+                if (_instance == null)
                 {
-                    instance = FindObjectOfType<Conductor>();
-                    if (instance == null)
+                    _instance = FindObjectOfType<Conductor>();
+                    if (_instance == null)
                     {
                         Debug.LogError("Conductorが見つかりません！シーンにConductorを配置してください。");
                     }
                 }
-                return instance;
+                return _instance;
             }
         }
 
         [Header("楽曲設定")]
         [Tooltip("楽曲のBPM（Beats Per Minute）")]
-        public float songBpm = 120f;
+        [SerializeField] private float _songBpm = 120f;
         
         [Tooltip("最初のビートまでのオフセット時間（秒）")]
-        public float firstBeatOffset = 0f;
+        [SerializeField] private float _firstBeatOffset = 0f;
         
         [Tooltip("楽曲再生用のAudioSource")]
-        public AudioSource songSource;
+        [SerializeField] private AudioSource _songSource;
 
         [Header("ノーツ移動設定")]
         [Tooltip("ノーツの移動速度（Z軸距離/ビート）")]
-        public float noteSpeed = 10.0f;
+        [SerializeField] private float _noteSpeed = 10.0f;
         
         [Tooltip("ノーツ生成位置のZ座標")]
-        public float spawnZ = 20.0f;
+        [SerializeField] private float _spawnZ = 20.0f;
         
         [Tooltip("判定ラインのZ座標")]
-        public float hitZ = 0.0f;
+        [SerializeField] private float _hitZ = 0.0f;
 
         [Header("デバッグ設定")]
         [Tooltip("デバッグログを有効にする")]
-        public bool enableDebugLog = false;
+        [SerializeField] private bool _enableDebugLog = false;
 
         // 楽曲開始時のdspTime
-        private double dspSongTime;
+        private double _dspSongTime;
         
         // 1ビートあたりの秒数
-        private float secPerBeat;
+        private float _secPerBeat;
         
         // 楽曲が再生中かどうか
-        private bool isPlaying = false;
+        private bool _isPlaying = false;
+        
+        // キャッシュされたコンポーネント
+        private AudioSource _cachedAudioSource;
 
         /// <summary>
         /// 現在の楽曲再生位置（秒）
         /// </summary>
-        public float songPositionInSeconds
+        public float SongPositionInSeconds
         {
             get
             {
-                if (!isPlaying) return 0f;
-                return (float)(AudioSettings.dspTime - dspSongTime - firstBeatOffset);
+                if (!_isPlaying) return 0f;
+                return (float)(AudioSettings.dspTime - _dspSongTime - _firstBeatOffset);
             }
         }
 
         /// <summary>
         /// 現在の楽曲再生位置（ビート）
         /// </summary>
-        public float songPositionInBeats
+        public float SongPositionInBeats
         {
             get
             {
-                if (!isPlaying || secPerBeat <= 0) return 0f;
-                return songPositionInSeconds / secPerBeat;
+                if (!_isPlaying || _secPerBeat <= 0) return 0f;
+                return SongPositionInSeconds / _secPerBeat;
             }
         }
 
         /// <summary>
         /// 楽曲が再生中かどうか
         /// </summary>
-        public bool IsPlaying => isPlaying;
+        public bool IsPlaying => _isPlaying;
+        
+        /// <summary>
+        /// 楽曲のBPM
+        /// </summary>
+        public float SongBpm => _songBpm;
+        
+        /// <summary>
+        /// ノーツの移動速度
+        /// </summary>
+        public float NoteSpeed => _noteSpeed;
+        
+        /// <summary>
+        /// ノーツ生成位置のZ座標
+        /// </summary>
+        public float SpawnZ => _spawnZ;
+        
+        /// <summary>
+        /// 判定ラインのZ座標
+        /// </summary>
+        public float HitZ => _hitZ;
 
         void Awake()
         {
             // シングルトンパターンの実装
-            if (instance == null)
+            if (_instance == null)
             {
-                instance = this;
+                _instance = this;
                 DontDestroyOnLoad(gameObject);
+                InitializeComponents();
                 LogDebug("Conductorインスタンスが作成されました");
             }
-            else if (instance != this)
+            else if (_instance != this)
             {
                 LogDebug("重複するConductorインスタンスを破棄します");
                 Destroy(gameObject);
@@ -112,26 +136,9 @@ namespace Jirou.Core
 
         void Start()
         {
-            // 必須コンポーネントのチェック
-            if (songSource == null)
-            {
-                songSource = GetComponent<AudioSource>();
-                if (songSource == null)
-                {
-                    Debug.LogError("AudioSourceが見つかりません！Conductorと同じGameObjectに追加してください。");
-                }
-            }
-            
-            // BPMの妥当性チェック
-            if (songBpm <= 0)
-            {
-                Debug.LogWarning($"不正なBPM値: {songBpm}。デフォルト値120に設定します。");
-                songBpm = 120f;
-            }
-            
-            // 初期計算
-            secPerBeat = 60.0f / songBpm;
-            LogDebug($"初期化完了: BPM={songBpm}, 1ビート={secPerBeat}秒");
+            ValidateSettings();
+            CalculateInitialValues();
+            LogDebug($"初期化完了: BPM={_songBpm}, 1ビート={_secPerBeat}秒");
         }
 
 
@@ -143,16 +150,16 @@ namespace Jirou.Core
             if (!ValidateAudioSource()) return;
             
             // BPMから1ビートあたりの秒数を計算
-            secPerBeat = 60.0f / songBpm;
+            _secPerBeat = 60.0f / _songBpm;
             
             // 開始時刻を記録
-            dspSongTime = AudioSettings.dspTime;
+            _dspSongTime = AudioSettings.dspTime;
             
             // 楽曲を再生
-            songSource.Play();
-            isPlaying = true;
+            _cachedAudioSource.Play();
+            _isPlaying = true;
             
-            LogDebug($"楽曲開始: BPM={songBpm}, オフセット={firstBeatOffset}秒");
+            LogDebug($"楽曲開始: BPM={_songBpm}, オフセット={_firstBeatOffset}秒");
         }
 
         /// <summary>
@@ -160,10 +167,10 @@ namespace Jirou.Core
         /// </summary>
         public void StopSong()
         {
-            if (songSource != null && songSource.isPlaying)
+            if (_cachedAudioSource != null && _cachedAudioSource.isPlaying)
             {
-                songSource.Stop();
-                isPlaying = false;
+                _cachedAudioSource.Stop();
+                _isPlaying = false;
                 LogDebug("楽曲停止");
             }
         }
@@ -173,10 +180,10 @@ namespace Jirou.Core
         /// </summary>
         public void PauseSong()
         {
-            if (songSource != null && songSource.isPlaying)
+            if (_cachedAudioSource != null && _cachedAudioSource.isPlaying)
             {
-                songSource.Pause();
-                isPlaying = false;
+                _cachedAudioSource.Pause();
+                _isPlaying = false;
                 LogDebug("楽曲一時停止");
             }
         }
@@ -186,10 +193,10 @@ namespace Jirou.Core
         /// </summary>
         public void ResumeSong()
         {
-            if (songSource != null && !songSource.isPlaying)
+            if (_cachedAudioSource != null && !_cachedAudioSource.isPlaying)
             {
-                songSource.UnPause();
-                isPlaying = true;
+                _cachedAudioSource.UnPause();
+                _isPlaying = true;
                 LogDebug("楽曲再開");
             }
         }
@@ -202,10 +209,10 @@ namespace Jirou.Core
         public float GetNoteZPosition(float noteBeat)
         {
             // 現在のビート位置からノーツビートまでの差分
-            float beatsPassed = songPositionInBeats - noteBeat;
+            float beatsPassed = SongPositionInBeats - noteBeat;
             
             // Z座標を計算（奥から手前へ移動）
-            float zPosition = spawnZ - (beatsPassed * noteSpeed);
+            float zPosition = _spawnZ - (beatsPassed * _noteSpeed);
             
             return zPosition;
         }
@@ -222,7 +229,7 @@ namespace Jirou.Core
             float spawnBeat = noteBeat - beatsInAdvance;
             
             // 現在のビート位置が生成タイミングを超えたか
-            return songPositionInBeats >= spawnBeat;
+            return SongPositionInBeats >= spawnBeat;
         }
 
         /// <summary>
@@ -234,7 +241,7 @@ namespace Jirou.Core
         public bool IsNoteInHitZone(float noteZ, float tolerance = 1.0f)
         {
             // 判定ラインとの距離を計算
-            float distance = Mathf.Abs(noteZ - hitZ);
+            float distance = Mathf.Abs(noteZ - _hitZ);
             
             // 許容範囲内かチェック
             return distance <= tolerance;
@@ -247,8 +254,8 @@ namespace Jirou.Core
         /// <returns>残り時間（秒）</returns>
         public float GetTimeUntilBeat(float targetBeat)
         {
-            float beatsRemaining = targetBeat - songPositionInBeats;
-            return beatsRemaining * secPerBeat;
+            float beatsRemaining = targetBeat - SongPositionInBeats;
+            return beatsRemaining * _secPerBeat;
         }
 
         /// <summary>
@@ -263,24 +270,59 @@ namespace Jirou.Core
                 return;
             }
             
-            songBpm = newBpm;
-            secPerBeat = 60.0f / songBpm;
+            _songBpm = newBpm;
+            _secPerBeat = 60.0f / _songBpm;
             LogDebug($"BPM変更: {newBpm}");
         }
 
 
         /// <summary>
+        /// コンポーネントの初期化
+        /// </summary>
+        private void InitializeComponents()
+        {
+            _cachedAudioSource = _songSource != null ? _songSource : GetComponent<AudioSource>();
+        }
+        
+        /// <summary>
+        /// 設定の検証
+        /// </summary>
+        private void ValidateSettings()
+        {
+            // AudioSourceのチェック
+            if (_cachedAudioSource == null)
+            {
+                Debug.LogError("AudioSourceが見つかりません！Conductorと同じGameObjectに追加してください。");
+            }
+            
+            // BPMの妥当性チェック
+            if (_songBpm <= 0)
+            {
+                Debug.LogWarning($"不正なBPM値: {_songBpm}。デフォルト値120に設定します。");
+                _songBpm = 120f;
+            }
+        }
+        
+        /// <summary>
+        /// 初期値の計算
+        /// </summary>
+        private void CalculateInitialValues()
+        {
+            _secPerBeat = 60.0f / _songBpm;
+        }
+        
+        /// <summary>
         /// AudioSourceの検証
         /// </summary>
         private bool ValidateAudioSource()
         {
-            if (songSource == null)
+            if (_cachedAudioSource == null)
             {
                 Debug.LogError("AudioSourceが設定されていません！");
                 return false;
             }
             
-            if (songSource.clip == null)
+            if (_cachedAudioSource.clip == null)
             {
                 Debug.LogError("AudioClipが設定されていません！");
                 return false;
@@ -294,7 +336,7 @@ namespace Jirou.Core
         /// </summary>
         private void LogDebug(string message)
         {
-            if (enableDebugLog)
+            if (_enableDebugLog)
             {
                 Debug.Log($"[Conductor] {message}");
             }
@@ -318,36 +360,36 @@ namespace Jirou.Core
             
             // デバッグ情報表示
             GUI.Label(new Rect(20, 35, 230, 20), 
-                      $"BPM: {songBpm}", style);
+                      $"BPM: {_songBpm}", style);
             GUI.Label(new Rect(20, 55, 230, 20), 
-                      $"Time: {songPositionInSeconds:F2}s", style);
+                      $"Time: {SongPositionInSeconds:F2}s", style);
             GUI.Label(new Rect(20, 75, 230, 20), 
-                      $"Beat: {songPositionInBeats:F2}", style);
+                      $"Beat: {SongPositionInBeats:F2}", style);
             GUI.Label(new Rect(20, 95, 230, 20), 
-                      $"Playing: {isPlaying}", style);
+                      $"Playing: {_isPlaying}", style);
             GUI.Label(new Rect(20, 115, 230, 20), 
-                      $"Note Speed: {noteSpeed}", style);
+                      $"Note Speed: {_noteSpeed}", style);
         }
 
         void OnDrawGizmos()
         {
             // スポーンラインの可視化
             Gizmos.color = Color.green;
-            Gizmos.DrawWireCube(new Vector3(0, 0.5f, spawnZ), 
+            Gizmos.DrawWireCube(new Vector3(0, 0.5f, _spawnZ), 
                                 new Vector3(10, 0.1f, 0.1f));
             
             // スポーンライン位置のラベル
             UnityEditor.Handles.color = Color.green;
-            UnityEditor.Handles.Label(new Vector3(5, 1, spawnZ), "Spawn Line");
+            UnityEditor.Handles.Label(new Vector3(5, 1, _spawnZ), "Spawn Line");
             
             // 判定ラインの可視化
             Gizmos.color = Color.red;
-            Gizmos.DrawWireCube(new Vector3(0, 0.5f, hitZ), 
+            Gizmos.DrawWireCube(new Vector3(0, 0.5f, _hitZ), 
                                 new Vector3(10, 0.1f, 0.1f));
             
             // 判定ライン位置のラベル
             UnityEditor.Handles.color = Color.red;
-            UnityEditor.Handles.Label(new Vector3(5, 1, hitZ), "Hit Line");
+            UnityEditor.Handles.Label(new Vector3(5, 1, _hitZ), "Hit Line");
             
             // 移動経路の可視化（4レーン）
             float[] laneX = { -3f, -1f, 1f, 3f };
@@ -355,16 +397,16 @@ namespace Jirou.Core
             
             foreach (float x in laneX)
             {
-                Gizmos.DrawLine(new Vector3(x, 0.5f, spawnZ), 
-                                new Vector3(x, 0.5f, hitZ));
+                Gizmos.DrawLine(new Vector3(x, 0.5f, _spawnZ), 
+                                new Vector3(x, 0.5f, _hitZ));
             }
             
             // Z軸方向の矢印
             Gizmos.color = Color.cyan;
-            Gizmos.DrawLine(new Vector3(0, 2, spawnZ), 
-                            new Vector3(0, 2, hitZ));
+            Gizmos.DrawLine(new Vector3(0, 2, _spawnZ), 
+                            new Vector3(0, 2, _hitZ));
             // 矢印の先端を表現するためのワイヤーキューブ
-            Gizmos.DrawWireCube(new Vector3(0, 2, hitZ), 
+            Gizmos.DrawWireCube(new Vector3(0, 2, _hitZ), 
                                 new Vector3(0.5f, 0.5f, 0.5f));
         }
 #endif

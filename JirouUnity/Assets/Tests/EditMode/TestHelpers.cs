@@ -93,7 +93,7 @@ namespace Jirou.Tests.EditMode
         /// <summary>
         /// テスト用のノートデータを生成
         /// </summary>
-        public static NoteTestData CreateTestNote(int laneIndex, float beat, NoteType type = NoteType.Tap)
+        public static NoteTestData CreateTestNote(int laneIndex, float beat, Core.NoteType type = Core.NoteType.Tap)
         {
             float[] lanes = GetLanePositions();
             if (laneIndex < 0 || laneIndex >= lanes.Length)
@@ -107,7 +107,7 @@ namespace Jirou.Tests.EditMode
                 xPosition = lanes[laneIndex],
                 beat = beat,
                 noteType = type,
-                holdDuration = type == NoteType.Hold ? 1f : 0f
+                holdDuration = type == Core.NoteType.Hold ? 1f : 0f
             };
         }
         
@@ -118,14 +118,14 @@ namespace Jirou.Tests.EditMode
         {
             return new NoteTestData[]
             {
-                CreateTestNote(0, 1f, NoteType.Tap),
-                CreateTestNote(1, 2f, NoteType.Tap),
-                CreateTestNote(2, 3f, NoteType.Hold),
-                CreateTestNote(3, 4f, NoteType.Tap),
-                CreateTestNote(0, 5f, NoteType.Tap),
-                CreateTestNote(2, 6f, NoteType.Hold),
-                CreateTestNote(1, 7f, NoteType.Tap),
-                CreateTestNote(3, 8f, NoteType.Tap)
+                CreateTestNote(0, 1f, Core.NoteType.Tap),
+                CreateTestNote(1, 2f, Core.NoteType.Tap),
+                CreateTestNote(2, 3f, Core.NoteType.Hold),
+                CreateTestNote(3, 4f, Core.NoteType.Tap),
+                CreateTestNote(0, 5f, Core.NoteType.Tap),
+                CreateTestNote(2, 6f, Core.NoteType.Hold),
+                CreateTestNote(1, 7f, Core.NoteType.Tap),
+                CreateTestNote(3, 8f, Core.NoteType.Tap)
             };
         }
     }
@@ -165,14 +165,7 @@ namespace Jirou.Tests.EditMode
         Ignore
     }
     
-    /// <summary>
-    /// ノートタイプ
-    /// </summary>
-    public enum NoteType
-    {
-        Tap,
-        Hold
-    }
+    // NoteTypeはCore名前空間のものを使用するため、ここでは削除
     
     /// <summary>
     /// テスト用ノートデータ
@@ -182,7 +175,7 @@ namespace Jirou.Tests.EditMode
         public int laneIndex;
         public float xPosition;
         public float beat;
-        public NoteType noteType;
+        public Core.NoteType noteType;
         public float holdDuration;
     }
 }

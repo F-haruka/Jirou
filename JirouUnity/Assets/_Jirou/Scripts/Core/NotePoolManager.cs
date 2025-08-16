@@ -9,34 +9,48 @@ namespace Jirou.Core
     public class NotePoolManager : MonoBehaviour
     {
         [Header("プレハブ設定")]
-        [SerializeField] private GameObject tapNotePrefab;
-        [SerializeField] private GameObject holdNotePrefab;
+        [SerializeField] private GameObject _tapNotePrefab;
+        [SerializeField] private GameObject _holdNotePrefab;
         
         [Header("プール設定")]
-        [SerializeField] private int initialPoolSize = 50;
-        [SerializeField] private int maxPoolSize = 200;
+        [SerializeField] private int _initialPoolSize = 50;
+        [SerializeField] private int _maxPoolSize = 200;
         
-        private Queue<GameObject> tapNotePool = new Queue<GameObject>();
-        private Queue<GameObject> holdNotePool = new Queue<GameObject>();
-        private Transform poolContainer;
+        private Queue<GameObject> _tapNotePool = new Queue<GameObject>();
+        private Queue<GameObject> _holdNotePool = new Queue<GameObject>();
+        private Transform _poolContainer;
         
-        private static NotePoolManager instance;
+        private static NotePoolManager _instance;
         public static NotePoolManager Instance
         {
             get
             {
-                if (instance == null)
+                if (_instance == null)
                 {
-                    instance = FindObjectOfType<NotePoolManager>();
+                    _instance = FindObjectOfType<NotePoolManager>();
+                    if (_instance == null)
+                    {
+                        Debug.LogError("NotePoolManagerが見つかりません！シーンに配置してください。");
+                    }
                 }
-                return instance;
+                return _instance;
             }
         }
         
         void Awake()
         {
-            instance = this;
-            InitializePool();
+            // シングルトンパターンの実装
+            if (_instance == null)
+            {
+                _instance = this;
+                DontDestroyOnLoad(gameObject);
+                InitializePool();
+            }
+            else if (_instance != this)
+            {
+                Debug.LogWarning("重複するNotePoolManagerインスタンスを破棄します");
+                Destroy(gameObject);
+            }
         }
         
         /// <summary>
@@ -44,23 +58,38 @@ namespace Jirou.Core
         /// </summary>
         private void InitializePool()
         {
-            // プールコンテナを作成
+            CreatePoolContainer();
+            CreateInitialNotes();
+            
+            Debug.Log($"[NotePool] 初期化完了 - Tap: {_tapNotePool.Count}, Hold: {_holdNotePool.Count}");
+        }
+        
+        /// <summary>
+        /// プールコンテナを作成
+        /// </summary>
+        private void CreatePoolContainer()
+        {
             GameObject container = new GameObject("NotePool");
             container.transform.SetParent(transform);
-            poolContainer = container.transform;
+            _poolContainer = container.transform;
+        }
+        
+        /// <summary>
+        /// 初期ノーツを作成
+        /// </summary>
+        private void CreateInitialNotes()
+        {
+            int holdNoteCount = _initialPoolSize / 2;
             
-            // 初期プールを生成
-            for (int i = 0; i < initialPoolSize; i++)
+            for (int i = 0; i < _initialPoolSize; i++)
             {
                 CreatePooledNote(NoteType.Tap);
                 
-                if (i < initialPoolSize / 2)  // Holdノーツは半分の数
+                if (i < holdNoteCount)
                 {
                     CreatePooledNote(NoteType.Hold);
                 }
             }
-            
-            Debug.Log($"[NotePool] 初期化完了 - Tap: {tapNotePool.Count}, Hold: {holdNotePool.Count}");
         }
         
         /// <summary>
@@ -68,7 +97,7 @@ namespace Jirou.Core
         /// </summary>
         private GameObject CreatePooledNote(NoteType type)
         {
-            GameObject prefab = type == NoteType.Tap ? tapNotePrefab : holdNotePrefab;
+            GameObject prefab = GetPrefabForType(type);
             
             if (prefab == null)
             {
@@ -76,13 +105,45 @@ namespace Jirou.Core
                 return null;
             }
             
-            GameObject note = Instantiate(prefab, poolContainer);
-            note.SetActive(false);
-            
-            Queue<GameObject> pool = type == NoteType.Tap ? tapNotePool : holdNotePool;
-            pool.Enqueue(note);
+            GameObject note = InstantiateNote(prefab);
+            AddNoteToPool(note, type);
             
             return note;
+        }
+        
+        /// <summary>
+        /// ノーツタイプに対応するプレハブを取得
+        /// </summary>
+        private GameObject GetPrefabForType(NoteType type)
+        {
+            return type == NoteType.Tap ? _tapNotePrefab : _holdNotePrefab;
+        }
+        
+        /// <summary>
+        /// ノーットをインスタンシエート
+        /// </summary>
+        private GameObject InstantiateNote(GameObject prefab)
+        {
+            GameObject note = Instantiate(prefab, _poolContainer);
+            note.SetActive(false);
+            return note;
+        }
+        
+        /// <summary>
+        /// ノーツをプールに追加
+        /// </summary>
+        private void AddNoteToPool(GameObject note, NoteType type)
+        {
+            Queue<GameObject> pool = GetPoolForType(type);
+            pool.Enqueue(note);
+        }
+        
+        /// <summary>
+        /// ノーツタイプに対応するプールを取得
+        /// </summary>
+        private Queue<GameObject> GetPoolForType(NoteType type)
+        {
+            return type == NoteType.Tap ? _tapNotePool : _holdNotePool;
         }
         
         /// <summary>
@@ -90,14 +151,27 @@ namespace Jirou.Core
         /// </summary>
         public GameObject GetNote(NoteType type)
         {
-            Queue<GameObject> pool = type == NoteType.Tap ? tapNotePool : holdNotePool;
+            Queue<GameObject> pool = GetPoolForType(type);
             
-            GameObject note = null;
+            GameObject note = TryGetNoteFromPool(pool);
             
-            // プールから取得を試みる
+            // プールが空の場合は新規作成
+            if (note == null)
+            {
+                note = CreateNewNote(type, pool);
+            }
+            
+            return note;
+        }
+        
+        /// <summary>
+        /// プールからノーツを取得を試みる
+        /// </summary>
+        private GameObject TryGetNoteFromPool(Queue<GameObject> pool)
+        {
             while (pool.Count > 0)
             {
-                note = pool.Dequeue();
+                GameObject note = pool.Dequeue();
                 
                 if (note != null)
                 {
@@ -105,9 +179,15 @@ namespace Jirou.Core
                     return note;
                 }
             }
-            
-            // プールが空の場合は新規作成
-            note = CreatePooledNote(type);
+            return null;
+        }
+        
+        /// <summary>
+        /// 新しいノーツを作成
+        /// </summary>
+        private GameObject CreateNewNote(NoteType type, Queue<GameObject> pool)
+        {
+            GameObject note = CreatePooledNote(type);
             
             if (note != null)
             {
@@ -125,17 +205,12 @@ namespace Jirou.Core
         {
             if (note == null) return;
             
-            // リセット処理
-            note.SetActive(false);
-            note.transform.SetParent(poolContainer);
-            note.transform.position = Vector3.zero;
-            note.transform.rotation = Quaternion.identity;
-            note.transform.localScale = Vector3.one;
+            ResetNote(note);
             
-            Queue<GameObject> pool = type == NoteType.Tap ? tapNotePool : holdNotePool;
+            Queue<GameObject> pool = GetPoolForType(type);
             
             // プールサイズ制限チェック
-            if (pool.Count < maxPoolSize)
+            if (pool.Count < _maxPoolSize)
             {
                 pool.Enqueue(note);
             }
@@ -146,19 +221,38 @@ namespace Jirou.Core
         }
         
         /// <summary>
+        /// ノーツをリセット
+        /// </summary>
+        private void ResetNote(GameObject note)
+        {
+            note.SetActive(false);
+            note.transform.SetParent(_poolContainer);
+            note.transform.position = Vector3.zero;
+            note.transform.rotation = Quaternion.identity;
+            note.transform.localScale = Vector3.one;
+        }
+        
+        /// <summary>
         /// プールの統計情報を取得
         /// </summary>
         public void GetPoolStatistics(out int tapActive, out int tapPooled, 
                                       out int holdActive, out int holdPooled)
         {
-            tapPooled = tapNotePool.Count;
-            holdPooled = holdNotePool.Count;
+            tapPooled = _tapNotePool.Count;
+            holdPooled = _holdNotePool.Count;
             
-            // アクティブなノーツをカウント
+            CountActiveNotes(out tapActive, out holdActive);
+        }
+        
+        /// <summary>
+        /// アクティブなノーツをカウント
+        /// </summary>
+        private void CountActiveNotes(out int tapActive, out int holdActive)
+        {
             tapActive = 0;
             holdActive = 0;
             
-            foreach (Transform child in poolContainer)
+            foreach (Transform child in _poolContainer)
             {
                 if (child.gameObject.activeInHierarchy)
                 {
@@ -175,25 +269,38 @@ namespace Jirou.Core
         /// </summary>
         public void ClearPool()
         {
-            // すべてのノーツを非アクティブ化
-            foreach (Transform child in poolContainer)
+            DeactivateAllNotes();
+            RebuildPools();
+            
+            Debug.Log("[NotePool] プールをクリアしました");
+        }
+        
+        /// <summary>
+        /// すべてのノーツを非アクティブ化
+        /// </summary>
+        private void DeactivateAllNotes()
+        {
+            foreach (Transform child in _poolContainer)
             {
                 child.gameObject.SetActive(false);
             }
+        }
+        
+        /// <summary>
+        /// プールを再構築
+        /// </summary>
+        private void RebuildPools()
+        {
+            _tapNotePool.Clear();
+            _holdNotePool.Clear();
             
-            // プールを再構築
-            tapNotePool.Clear();
-            holdNotePool.Clear();
-            
-            foreach (Transform child in poolContainer)
+            foreach (Transform child in _poolContainer)
             {
                 if (child.name.Contains("Tap"))
-                    tapNotePool.Enqueue(child.gameObject);
+                    _tapNotePool.Enqueue(child.gameObject);
                 else if (child.name.Contains("Hold"))
-                    holdNotePool.Enqueue(child.gameObject);
+                    _holdNotePool.Enqueue(child.gameObject);
             }
-            
-            Debug.Log("[NotePool] プールをクリアしました");
         }
     }
 }

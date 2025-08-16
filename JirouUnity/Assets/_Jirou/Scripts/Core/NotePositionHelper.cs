@@ -8,27 +8,40 @@ namespace Jirou.Core
     [System.Serializable]
     public struct NotePosition3D
     {
-        public float x;  // レーン位置
-        public float y;  // 高さ
-        public float z;  // 奥行き位置
+        [SerializeField] private float _x;  // レーン位置
+        [SerializeField] private float _y;  // 高さ
+        [SerializeField] private float _z;  // 奥行き位置
+        
+        // プロパティ
+        public float X => _x;
+        public float Y => _y;
+        public float Z => _z;
         
         /// <summary>
         /// コンストラクタ
         /// </summary>
         public NotePosition3D(int laneIndex, float zPosition, float yPosition = 0.5f)
         {
-            if (laneIndex >= 0 && laneIndex < NoteData.LaneXPositions.Length)
+            if (IsValidLaneIndex(laneIndex))
             {
-                x = NoteData.LaneXPositions[laneIndex];
+                _x = NoteData.LaneXPositions[laneIndex];
             }
             else
             {
-                x = 0f;
+                _x = 0f;
                 Debug.LogWarning($"無効なレーンインデックス: {laneIndex}");
             }
             
-            y = yPosition;
-            z = zPosition;
+            _y = yPosition;
+            _z = zPosition;
+        }
+        
+        /// <summary>
+        /// レーンインデックスの妥当性をチェック
+        /// </summary>
+        private static bool IsValidLaneIndex(int laneIndex)
+        {
+            return laneIndex >= 0 && laneIndex < NoteData.LaneXPositions.Length;
         }
         
         /// <summary>
@@ -36,7 +49,7 @@ namespace Jirou.Core
         /// </summary>
         public Vector3 ToVector3()
         {
-            return new Vector3(x, y, z);
+            return new Vector3(_x, _y, _z);
         }
         
         /// <summary>
@@ -44,7 +57,7 @@ namespace Jirou.Core
         /// </summary>
         public float GetDistanceToJudgmentLine(float judgmentZ = 0f)
         {
-            return Mathf.Abs(z - judgmentZ);
+            return Mathf.Abs(_z - judgmentZ);
         }
     }
     
@@ -61,10 +74,26 @@ namespace Jirou.Core
             if (spawnZ <= 0) return baseScale;
             
             // 奥（spawnZ）で0.5倍、手前（0）で1.5倍にスケーリング
-            float distanceRatio = Mathf.Clamp01(currentZ / spawnZ);
-            float scaleFactor = Mathf.Lerp(1.5f, 0.5f, distanceRatio);
+            float distanceRatio = CalculateDistanceRatio(currentZ, spawnZ);
+            float scaleFactor = InterpolateScaleFactor(distanceRatio);
             
             return baseScale * scaleFactor;
+        }
+        
+        /// <summary>
+        /// 距離比率を計算
+        /// </summary>
+        private static float CalculateDistanceRatio(float currentZ, float spawnZ)
+        {
+            return Mathf.Clamp01(currentZ / spawnZ);
+        }
+        
+        /// <summary>
+        /// スケールファクタを補間
+        /// </summary>
+        private static float InterpolateScaleFactor(float distanceRatio)
+        {
+            return Mathf.Lerp(1.5f, 0.5f, distanceRatio);
         }
         
         /// <summary>
@@ -74,15 +103,31 @@ namespace Jirou.Core
         {
             if (spawnZ <= 0) return 1f;
             
-            float fadeStartZ = spawnZ * fadeStartRatio;
+            float fadeStartZ = CalculateFadeStartZ(spawnZ, fadeStartRatio);
             
             if (currentZ > fadeStartZ)
             {
-                float fadeRatio = (currentZ - fadeStartZ) / (spawnZ - fadeStartZ);
-                return 1f - fadeRatio;
+                return CalculateFadeAlpha(currentZ, fadeStartZ, spawnZ);
             }
             
             return 1f;
+        }
+        
+        /// <summary>
+        /// フェード開始位置を計算
+        /// </summary>
+        private static float CalculateFadeStartZ(float spawnZ, float fadeStartRatio)
+        {
+            return spawnZ * fadeStartRatio;
+        }
+        
+        /// <summary>
+        /// フェードアルファ値を計算
+        /// </summary>
+        private static float CalculateFadeAlpha(float currentZ, float fadeStartZ, float spawnZ)
+        {
+            float fadeRatio = (currentZ - fadeStartZ) / (spawnZ - fadeStartZ);
+            return 1f - fadeRatio;
         }
         
         /// <summary>
@@ -90,14 +135,13 @@ namespace Jirou.Core
         /// </summary>
         public static Vector3 CalculateNoteWorldPosition(NoteData noteData, float currentBeat, Conductor conductor)
         {
-            if (conductor == null)
+            if (!ValidateConductor(conductor))
             {
-                Debug.LogError("Conductorが設定されていません");
                 return Vector3.zero;
             }
             
-            float zPosition = conductor.GetNoteZPosition(noteData.timeToHit);
-            var position = new NotePosition3D(noteData.laneIndex, zPosition);
+            float zPosition = conductor.GetNoteZPosition(noteData.TimeToHit);
+            var position = new NotePosition3D(noteData.LaneIndex, zPosition);
             
             return position.ToVector3();
         }
@@ -107,23 +151,47 @@ namespace Jirou.Core
         /// </summary>
         public static Vector3 CalculateHoldEndPosition(NoteData noteData, Conductor conductor)
         {
-            if (noteData.noteType != NoteType.Hold)
+            if (!ValidateHoldNote(noteData))
             {
-                Debug.LogWarning("HoldノーツではないためCalculateHoldEndPositionをスキップ");
                 return Vector3.zero;
             }
             
+            if (!ValidateConductor(conductor))
+            {
+                return Vector3.zero;
+            }
+            
+            float endBeat = noteData.TimeToHit + noteData.HoldDuration;
+            float zPosition = conductor.GetNoteZPosition(endBeat);
+            var position = new NotePosition3D(noteData.LaneIndex, zPosition);
+            
+            return position.ToVector3();
+        }
+        
+        /// <summary>
+        /// Holdノーツの検証
+        /// </summary>
+        private static bool ValidateHoldNote(NoteData noteData)
+        {
+            if (noteData.NoteType != NoteType.Hold)
+            {
+                Debug.LogWarning("HoldノーツではないためCalculateHoldEndPositionをスキップ");
+                return false;
+            }
+            return true;
+        }
+        
+        /// <summary>
+        /// Conductorの検証
+        /// </summary>
+        private static bool ValidateConductor(Conductor conductor)
+        {
             if (conductor == null)
             {
                 Debug.LogError("Conductorが設定されていません");
-                return Vector3.zero;
+                return false;
             }
-            
-            float endBeat = noteData.timeToHit + noteData.holdDuration;
-            float zPosition = conductor.GetNoteZPosition(endBeat);
-            var position = new NotePosition3D(noteData.laneIndex, zPosition);
-            
-            return position.ToVector3();
+            return true;
         }
     }
 }

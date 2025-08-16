@@ -15,9 +15,9 @@ namespace Jirou.Tests.EditMode
             var pos = new Core.NotePosition3D(1, 10f, 0.5f);
             
             // Assert
-            Assert.AreEqual(-1f, pos.x, "レーン1のX座標は-1");
-            Assert.AreEqual(0.5f, pos.y, "Y座標は0.5");
-            Assert.AreEqual(10f, pos.z, "Z座標は10");
+            Assert.AreEqual(-1f, pos.X, "レーン1のX座標は-1");
+            Assert.AreEqual(0.5f, pos.Y, "Y座標は0.5");
+            Assert.AreEqual(10f, pos.Z, "Z座標は10");
         }
         
         [Test]
@@ -27,9 +27,9 @@ namespace Jirou.Tests.EditMode
             var pos = new Core.NotePosition3D(0, 5f);
             
             // Assert
-            Assert.AreEqual(-3f, pos.x, "レーン0のX座標は-3");
-            Assert.AreEqual(0.5f, pos.y, "デフォルトY座標は0.5");
-            Assert.AreEqual(5f, pos.z, "Z座標は5");
+            Assert.AreEqual(-3f, pos.X, "レーン0のX座標は-3");
+            Assert.AreEqual(0.5f, pos.Y, "デフォルトY座標は0.5");
+            Assert.AreEqual(5f, pos.Z, "Z座標は5");
         }
         
         [Test]
@@ -40,8 +40,8 @@ namespace Jirou.Tests.EditMode
             var posOverflow = new Core.NotePosition3D(4, 10f);
             
             // Assert
-            Assert.AreEqual(0f, posNegative.x, "無効なレーンインデックスではX=0");
-            Assert.AreEqual(0f, posOverflow.x, "無効なレーンインデックスではX=0");
+            Assert.AreEqual(0f, posNegative.X, "無効なレーンインデックスではX=0");
+            Assert.AreEqual(0f, posOverflow.X, "無効なレーンインデックスではX=0");
         }
         
         [Test]
@@ -80,7 +80,7 @@ namespace Jirou.Tests.EditMode
             {
                 var pos = new Core.NotePosition3D(i, 0f);
                 float expectedX = Core.NoteData.LaneXPositions[i];
-                Assert.AreEqual(expectedX, pos.x, $"レーン{i}のX座標は{expectedX}");
+                Assert.AreEqual(expectedX, pos.X, $"レーン{i}のX座標は{expectedX}");
             }
         }
     }
@@ -239,7 +239,7 @@ namespace Jirou.Tests.EditMode
         public void CalculateNoteWorldPosition_RequiresConductor()
         {
             // Arrange
-            var noteData = new Core.NoteData { laneIndex = 1, timeToHit = 2f };
+            var noteData = new Core.NoteData { LaneIndex = 1, TimeToHit = 2f };
             
             // Act - Conductorがnullの場合、エラーログが出力されることを期待
             UnityEngine.TestTools.LogAssert.Expect(UnityEngine.LogType.Error, "Conductorが設定されていません");
@@ -255,9 +255,9 @@ namespace Jirou.Tests.EditMode
             // Arrange
             var tapNote = new Core.NoteData 
             { 
-                noteType = Core.NoteType.Tap,
-                laneIndex = 1, 
-                timeToHit = 2f 
+                NoteType = Core.NoteType.Tap,
+                LaneIndex = 1, 
+                TimeToHit = 2f 
             };
             
             // Act - TapノーツでCalculateHoldEndPositionを呼ぶと警告ログが出力されることを期待
@@ -274,10 +274,10 @@ namespace Jirou.Tests.EditMode
             // Arrange
             var holdNote = new Core.NoteData 
             { 
-                noteType = Core.NoteType.Hold,
-                laneIndex = 1, 
-                timeToHit = 2f,
-                holdDuration = 2f
+                NoteType = Core.NoteType.Hold,
+                LaneIndex = 1, 
+                TimeToHit = 2f,
+                HoldDuration = 2f
             };
             
             // Act - Conductorがnullの場合、エラーログが出力されることを期待

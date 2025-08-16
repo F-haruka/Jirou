@@ -13,62 +13,77 @@ namespace Jirou.Core
     {
         [Header("楽曲情報")]
         [Tooltip("楽曲ファイル")]
-        public AudioClip songClip;
+        [SerializeField] private AudioClip _songClip;
         
         [Tooltip("BPM（Beats Per Minute）")]
         [Range(60f, 300f)]
-        public float bpm = 120f;
+        [SerializeField] private float _bpm = 120f;
         
         [Tooltip("曲名")]
-        public string songName = "無題";
+        [SerializeField] private string _songName = "無題";
         
         [Tooltip("アーティスト名")]
-        public string artist = "不明";
+        [SerializeField] private string _artist = "不明";
         
         [Tooltip("プレビュー開始時間（秒）")]
         [Min(0f)]
-        public float previewTime = 0f;
+        [SerializeField] private float _previewTime = 0f;
         
         [Tooltip("最初のビートまでのオフセット（秒）")]
-        public float firstBeatOffset = 0f;
+        [SerializeField] private float _firstBeatOffset = 0f;
         
         [Header("難易度情報")]
         [Tooltip("難易度レベル（1-10）")]
         [Range(1, 10)]
-        public int difficulty = 1;
+        [SerializeField] private int _difficulty = 1;
         
         [Tooltip("難易度名")]
-        public string difficultyName = "Normal";
+        [SerializeField] private string _difficultyName = "Normal";
         
         [Header("譜面データ")]
         [Tooltip("ノーツリスト")]
-        public List<NoteData> notes = new List<NoteData>();
+        [SerializeField] private List<NoteData> _notes = new List<NoteData>();
         
         [Header("メタデータ")]
         [Tooltip("譜面作成者")]
-        public string chartAuthor = "";
+        [SerializeField] private string _chartAuthor = "";
         
         [Tooltip("譜面バージョン")]
-        public string chartVersion = "1.0";
+        [SerializeField] private string _chartVersion = "1.0";
         
         [Tooltip("作成日時")]
-        public string createdDate = "";
+        [SerializeField] private string _createdDate = "";
         
         [Tooltip("最終更新日時")]
-        public string lastModified = "";
+        [SerializeField] private string _lastModified = "";
+        
+        // プロパティ
+        public AudioClip SongClip => _songClip;
+        public float Bpm => _bpm;
+        public string SongName => _songName;
+        public string Artist => _artist;
+        public float PreviewTime => _previewTime;
+        public float FirstBeatOffset => _firstBeatOffset;
+        public int Difficulty => _difficulty;
+        public string DifficultyName => _difficultyName;
+        public List<NoteData> Notes => _notes;
+        public string ChartAuthor => _chartAuthor;
+        public string ChartVersion => _chartVersion;
+        public string CreatedDate => _createdDate;
+        public string LastModified => _lastModified;
         
         /// <summary>
         /// ノーツをタイミング順にソート
         /// </summary>
         public void SortNotesByTime()
         {
-            notes.Sort((a, b) => a.timeToHit.CompareTo(b.timeToHit));
+            _notes.Sort((a, b) => a.TimeToHit.CompareTo(b.TimeToHit));
             
             #if UNITY_EDITOR
             UnityEditor.EditorUtility.SetDirty(this);
             #endif
             
-            Debug.Log($"[ChartData] {notes.Count}個のノーツをソートしました");
+            Debug.Log($"[ChartData] {_notes.Count}個のノーツをソートしました");
         }
         
         /// <summary>
@@ -76,9 +91,9 @@ namespace Jirou.Core
         /// </summary>
         public List<NoteData> GetNotesInTimeRange(float startBeat, float endBeat)
         {
-            return notes.FindAll(n => 
-                n.timeToHit >= startBeat && 
-                n.timeToHit <= endBeat);
+            return _notes.FindAll(n => 
+                n.TimeToHit >= startBeat && 
+                n.TimeToHit <= endBeat);
         }
         
         /// <summary>
@@ -87,11 +102,11 @@ namespace Jirou.Core
         public int[] GetNoteCountByLane()
         {
             int[] counts = new int[4];
-            foreach (var note in notes)
+            foreach (var note in _notes)
             {
-                if (note.laneIndex >= 0 && note.laneIndex < 4)
+                if (note.LaneIndex >= 0 && note.LaneIndex < 4)
                 {
-                    counts[note.laneIndex]++;
+                    counts[note.LaneIndex]++;
                 }
             }
             return counts;
@@ -102,7 +117,7 @@ namespace Jirou.Core
         /// </summary>
         public int GetTotalNoteCount()
         {
-            return notes.Count;
+            return _notes.Count;
         }
         
         /// <summary>
@@ -110,7 +125,7 @@ namespace Jirou.Core
         /// </summary>
         public int GetHoldNoteCount()
         {
-            return notes.Count(n => n.noteType == NoteType.Hold);
+            return _notes.Count(n => n.NoteType == NoteType.Hold);
         }
         
         /// <summary>
@@ -118,7 +133,7 @@ namespace Jirou.Core
         /// </summary>
         public int GetTapNoteCount()
         {
-            return notes.Count(n => n.noteType == NoteType.Tap);
+            return _notes.Count(n => n.NoteType == NoteType.Tap);
         }
         
         /// <summary>
@@ -126,9 +141,9 @@ namespace Jirou.Core
         /// </summary>
         public float GetChartLengthInBeats()
         {
-            if (notes.Count == 0) return 0f;
+            if (_notes.Count == 0) return 0f;
             
-            float lastBeat = notes.Max(n => n.GetEndTime());
+            float lastBeat = _notes.Max(n => n.GetEndTime());
             return lastBeat;
         }
         
@@ -137,8 +152,8 @@ namespace Jirou.Core
         /// </summary>
         public float GetChartLengthInSeconds()
         {
-            if (bpm <= 0) return 0f;
-            return GetChartLengthInBeats() * (60f / bpm);
+            if (_bpm <= 0) return 0f;
+            return GetChartLengthInBeats() * (60f / _bpm);
         }
         
         /// <summary>
@@ -146,8 +161,8 @@ namespace Jirou.Core
         /// </summary>
         public float GetSongLengthInSeconds()
         {
-            if (songClip == null) return 0f;
-            return songClip.length;
+            if (_songClip == null) return 0f;
+            return _songClip.length;
         }
         
         /// <summary>
@@ -158,33 +173,66 @@ namespace Jirou.Core
             errors = new List<string>();
             bool isValid = true;
             
-            // BPMチェック
-            if (bpm <= 0 || bpm > 999)
+            // 空の譜面は有効とする
+            if (_notes.Count == 0)
             {
-                errors.Add($"不正なBPM値: {bpm}");
+                return true;
+            }
+            
+            // 基本データのバリデーション
+            isValid &= ValidateBasicData(errors);
+            
+            // ノーツデータのバリデーション
+            isValid &= ValidateNoteData(errors);
+            
+            // 譜面長のバリデーション
+            isValid &= ValidateChartLength(errors);
+            
+            return isValid;
+        }
+        
+        /// <summary>
+        /// 基本データのバリデーション
+        /// </summary>
+        private bool ValidateBasicData(List<string> errors)
+        {
+            bool isValid = true;
+            
+            // BPMチェック
+            if (_bpm <= 0 || _bpm > 999)
+            {
+                errors.Add($"不正なBPM値: {_bpm}");
                 isValid = false;
             }
             
             // 楽曲ファイルチェック
-            if (songClip == null)
+            if (_songClip == null)
             {
                 errors.Add("楽曲ファイルが設定されていません");
                 isValid = false;
             }
             
             // 曲名チェック
-            if (string.IsNullOrEmpty(songName))
+            if (string.IsNullOrEmpty(_songName))
             {
                 errors.Add("曲名が設定されていません");
                 isValid = false;
             }
             
-            // ノーツデータチェック
+            return isValid;
+        }
+        
+        /// <summary>
+        /// ノーツデータのバリデーション
+        /// </summary>
+        private bool ValidateNoteData(List<string> errors)
+        {
+            bool isValid = true;
             HashSet<string> duplicateCheck = new HashSet<string>();
             
-            for (int i = 0; i < notes.Count; i++)
+            for (int i = 0; i < _notes.Count; i++)
             {
-                var note = notes[i];
+                var note = _notes[i];
                 string noteError;
                 
                 // 個別ノーツのバリデーション
@@ -195,16 +243,25 @@ namespace Jirou.Core
                 }
                 
                 // 重複チェック（同じタイミング、同じレーン）
-                string key = $"{note.laneIndex}_{note.timeToHit:F3}";
+                string key = $"{note.LaneIndex}_{note.TimeToHit:F3}";
                 if (duplicateCheck.Contains(key))
                 {
-                    errors.Add($"ノーツ[{i}]: 重複ノーツ（レーン{note.laneIndex}, タイミング{note.timeToHit:F2}）");
+                    errors.Add($"ノーツ[{i}]: 重複ノーツ（レーン{note.LaneIndex}, タイミング{note.TimeToHit:F2}）");
                     isValid = false;
                 }
                 duplicateCheck.Add(key);
             }
             
-            // 譜面長チェック
+            return isValid;
+        }
+        
+        /// <summary>
+        /// 譜面長のバリデーション
+        /// </summary>
+        private bool ValidateChartLength(List<string> errors)
+        {
+            bool isValid = true;
+            
             float chartLength = GetChartLengthInSeconds();
             float songLength = GetSongLengthInSeconds();
             
@@ -230,20 +287,33 @@ namespace Jirou.Core
             stats.notesByLane = GetNoteCountByLane();
             stats.chartLengthBeats = GetChartLengthInBeats();
             stats.chartLengthSeconds = GetChartLengthInSeconds();
-            stats.averageNPS = stats.chartLengthSeconds > 0 ? stats.totalNotes / stats.chartLengthSeconds : 0f;
-            
-            // 密度計算
-            if (notes.Count > 1)
-            {
-                float totalInterval = 0f;
-                for (int i = 1; i < notes.Count; i++)
-                {
-                    totalInterval += Mathf.Abs(notes[i].timeToHit - notes[i - 1].timeToHit);
-                }
-                stats.averageInterval = totalInterval / (notes.Count - 1);
-            }
+            stats.averageNPS = CalculateAverageNPS(stats.totalNotes, stats.chartLengthSeconds);
+            stats.averageInterval = CalculateAverageInterval();
             
             return stats;
+        }
+        
+        /// <summary>
+        /// 平均NPSを計算
+        /// </summary>
+        private float CalculateAverageNPS(int totalNotes, float chartLengthSeconds)
+        {
+            return chartLengthSeconds > 0 ? totalNotes / chartLengthSeconds : 0f;
+        }
+        
+        /// <summary>
+        /// 平均間隔を計算
+        /// </summary>
+        private float CalculateAverageInterval()
+        {
+            if (_notes.Count <= 1) return 0f;
+            
+            float totalInterval = 0f;
+            for (int i = 1; i < _notes.Count; i++)
+            {
+                totalInterval += Mathf.Abs(_notes[i].TimeToHit - _notes[i - 1].TimeToHit);
+            }
+            return totalInterval / (_notes.Count - 1);
         }
         
         /// <summary>
@@ -252,10 +322,10 @@ namespace Jirou.Core
         public void PrintDebugInfo()
         {
             Debug.Log("=== Chart Debug Info ===");
-            Debug.Log($"曲名: {songName}");
-            Debug.Log($"アーティスト: {artist}");
-            Debug.Log($"BPM: {bpm}");
-            Debug.Log($"難易度: {difficultyName} (Lv.{difficulty})");
+            Debug.Log($"曲名: {_songName}");
+            Debug.Log($"アーティスト: {_artist}");
+            Debug.Log($"BPM: {_bpm}");
+            Debug.Log($"難易度: {_difficultyName} (Lv.{_difficulty})");
             
             var stats = GetStatistics();
             Debug.Log($"総ノーツ数: {stats.totalNotes}");

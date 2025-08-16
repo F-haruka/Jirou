@@ -29,16 +29,16 @@ namespace Jirou.Tests.PlayMode
             poolManager = poolManagerObject.AddComponent<NotePoolManager>();
 
             // プレハブを設定（リフレクションを使用）
-            var tapPrefabField = typeof(NotePoolManager).GetField("tapNotePrefab", 
+            var tapPrefabField = typeof(NotePoolManager).GetField("_tapNotePrefab", 
                 System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-            var holdPrefabField = typeof(NotePoolManager).GetField("holdNotePrefab", 
+            var holdPrefabField = typeof(NotePoolManager).GetField("_holdNotePrefab", 
                 System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
             
             tapPrefabField?.SetValue(poolManager, tapNotePrefab);
             holdPrefabField?.SetValue(poolManager, holdNotePrefab);
 
             // 初期プールサイズを設定
-            var initialSizeField = typeof(NotePoolManager).GetField("initialPoolSize", 
+            var initialSizeField = typeof(NotePoolManager).GetField("_initialPoolSize", 
                 System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
             initialSizeField?.SetValue(poolManager, 10);
         }
@@ -243,7 +243,7 @@ namespace Jirou.Tests.PlayMode
             yield return null;  // Awakeを待つ
 
             // Arrange - maxPoolSizeを小さく設定
-            var maxSizeField = typeof(NotePoolManager).GetField("maxPoolSize", 
+            var maxSizeField = typeof(NotePoolManager).GetField("_maxPoolSize", 
                 System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
             maxSizeField?.SetValue(poolManager, 2);
 

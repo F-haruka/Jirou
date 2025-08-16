@@ -56,7 +56,7 @@ namespace Jirou.Tests.EditMode
                 Assert.Greater(note.beat, 0f);
                 
                 // Holdノーツは持続時間を持つ
-                if (note.noteType == NoteType.Hold)
+                if (note.noteType == Core.NoteType.Hold)
                 {
                     Assert.Greater(note.holdDuration, 0f);
                 }
@@ -247,8 +247,8 @@ namespace Jirou.Tests.EditMode
         [Test]
         public void HoldNotes_SpecialHandling()
         {
-            var holdNote = TestHelpers.CreateTestNote(1, 5f, NoteType.Hold);
-            var tapNote = TestHelpers.CreateTestNote(1, 5f, NoteType.Tap);
+            var holdNote = TestHelpers.CreateTestNote(1, 5f, Core.NoteType.Hold);
+            var tapNote = TestHelpers.CreateTestNote(1, 5f, Core.NoteType.Tap);
             
             // Holdノーツは持続時間を持つ
             Assert.Greater(holdNote.holdDuration, 0f);

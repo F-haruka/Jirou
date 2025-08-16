@@ -21,43 +21,43 @@ namespace Jirou.Core
     {
         [Header("基本情報")]
         [Tooltip("ノーツの種類")]
-        public NoteType noteType = NoteType.Tap;
+        [SerializeField] private NoteType _noteType = NoteType.Tap;
         
         [Tooltip("レーン番号（0-3）")]
         [Range(0, 3)]
-        public int laneIndex = 0;
+        [SerializeField] private int _laneIndex = 0;
         
         [Tooltip("ヒットタイミング（ビート単位）")]
         [Min(0f)]
-        public float timeToHit = 0f;
+        [SerializeField] private float _timeToHit = 0f;
         
         [Header("Holdノーツ専用")]
         [Tooltip("Holdノーツの長さ（ビート単位）")]
         [Min(0f)]
-        public float holdDuration = 0f;
+        [SerializeField] private float _holdDuration = 0f;
         
         [Header("視覚調整")]
         [Tooltip("ノーツの大きさ倍率")]
         [Range(0.5f, 2.0f)]
-        public float visualScale = 1.0f;
+        [SerializeField] private float _visualScale = 1.0f;
         
         [Tooltip("ノーツの色")]
-        public Color noteColor = Color.white;
+        [SerializeField] private Color _noteColor = Color.white;
         
         [Header("オプション")]
         [Tooltip("カスタムヒット音")]
-        public AudioClip customHitSound;
+        [SerializeField] private AudioClip _customHitSound;
         
         [Tooltip("カスタムヒットエフェクト")]
-        public GameObject customHitEffect;
+        [SerializeField] private GameObject _customHitEffect;
         
         [Tooltip("基本スコア値")]
         [Min(1)]
-        public int baseScore = 100;
+        [SerializeField] private int _baseScore = 100;
         
         [Tooltip("スコア倍率")]
         [Range(0.1f, 10f)]
-        public float scoreMultiplier = 1.0f;
+        [SerializeField] private float _scoreMultiplier = 1.0f;
         
         // 静的定数
         public static readonly float[] LaneXPositions = { -3f, -1f, 1f, 3f };
@@ -69,16 +69,77 @@ namespace Jirou.Core
             KeyCode.K 
         };
         
+        // プロパティ
+        public NoteType NoteType
+        {
+            get => _noteType;
+            set => _noteType = value;
+        }
+        
+        public int LaneIndex
+        {
+            get => _laneIndex;
+            set => _laneIndex = value;
+        }
+        
+        public float TimeToHit
+        {
+            get => _timeToHit;
+            set => _timeToHit = value;
+        }
+        
+        public float HoldDuration
+        {
+            get => _holdDuration;
+            set => _holdDuration = value;
+        }
+        
+        public float VisualScale
+        {
+            get => _visualScale;
+            set => _visualScale = Mathf.Clamp(value, 0.5f, 2.0f);
+        }
+        
+        public Color NoteColor
+        {
+            get => _noteColor;
+            set => _noteColor = value;
+        }
+        
+        public AudioClip CustomHitSound
+        {
+            get => _customHitSound;
+            set => _customHitSound = value;
+        }
+        
+        public GameObject CustomHitEffect
+        {
+            get => _customHitEffect;
+            set => _customHitEffect = value;
+        }
+        
+        public int BaseScore
+        {
+            get => _baseScore;
+            set => _baseScore = Mathf.Max(1, value);
+        }
+        
+        public float ScoreMultiplier
+        {
+            get => _scoreMultiplier;
+            set => _scoreMultiplier = Mathf.Clamp(value, 0.1f, 10f);
+        }
+        
         /// <summary>
         /// レーンインデックスからX座標を取得
         /// </summary>
         public float GetLaneXPosition()
         {
-            if (laneIndex >= 0 && laneIndex < LaneXPositions.Length)
+            if (_laneIndex >= 0 && _laneIndex < LaneXPositions.Length)
             {
-                return LaneXPositions[laneIndex];
+                return LaneXPositions[_laneIndex];
             }
-            Debug.LogWarning($"無効なレーンインデックス: {laneIndex}");
+            Debug.LogWarning($"無効なレーンインデックス: {_laneIndex}");
             return 0f;
         }
         
@@ -87,7 +148,7 @@ namespace Jirou.Core
         /// </summary>
         public float GetEndTime()
         {
-            return noteType == NoteType.Hold ? timeToHit + holdDuration : timeToHit;
+            return _noteType == NoteType.Hold ? _timeToHit + _holdDuration : _timeToHit;
         }
         
         /// <summary>
@@ -97,27 +158,27 @@ namespace Jirou.Core
         {
             error = "";
             
-            if (laneIndex < 0 || laneIndex > 3)
+            if (_laneIndex < 0 || _laneIndex > 3)
             {
-                error = $"無効なレーンインデックス: {laneIndex}";
+                error = $"無効なレーンインデックス: {_laneIndex}";
                 return false;
             }
             
-            if (timeToHit < 0)
+            if (_timeToHit < 0)
             {
-                error = $"負のタイミング値: {timeToHit}";
+                error = $"負のタイミング値: {_timeToHit}";
                 return false;
             }
             
-            if (noteType == NoteType.Hold && holdDuration <= 0)
+            if (_noteType == NoteType.Hold && _holdDuration <= 0)
             {
-                error = $"Holdノーツの長さが不正: {holdDuration}";
+                error = $"Holdノーツの長さが不正: {_holdDuration}";
                 return false;
             }
             
-            if (visualScale <= 0)
+            if (_visualScale < 0.5f || _visualScale > 2.0f)
             {
-                error = $"不正なスケール値: {visualScale}";
+                error = $"不正なスケール値: {_visualScale} (範囲: 0.5-2.0)";
                 return false;
             }
             

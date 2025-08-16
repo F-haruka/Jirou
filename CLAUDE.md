@@ -140,6 +140,9 @@ git commit -m "メッセージ"    # 変更をコミット
 **重要なルール：**
 - **#regionディレクティブは使用しない**: C#コードでは`#region`および`#endregion`を使用しないでください。コードの構造はクラス設計とメソッドの適切な配置で表現します。
 
+詳細なコーディング規約については、以下のガイドラインを参照してください：
+@include docs/guidelines/csharp-coding-standards.md
+
 ### 現在の状態
 プロジェクトは初期設定段階にあり、以下の状態です：
 - ドキュメント通りのクリーンなディレクトリ構造が構築済み（Assets/_Jirou/, Assets/Settings/のみ）
@@ -216,6 +219,10 @@ Assets/Tests/
    - 緑のチェック: テスト成功
    - 赤のX: テスト失敗（詳細はConsoleウィンドウで確認）
 
+**注意：Claude Codeはコマンドラインからのテスト実行を行いません**
+- Unityテストの実行は必ずUnityエディタのTest Runnerウィンドウから行ってください
+- コマンドラインからのバッチモード実行（`Unity.exe -batchmode -runEditorTests`など）は使用しません
+- テストの実行と結果確認はユーザーがUnityエディタ上で行い、必要に応じてClaude Codeに結果を共有してください
 
 ### Unityテストのベストプラクティス
 
