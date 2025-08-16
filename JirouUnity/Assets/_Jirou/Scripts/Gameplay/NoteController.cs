@@ -23,6 +23,10 @@ namespace Jirou.Gameplay
         public bool isJudged { get; private set; }
         public bool isHolding { get; private set; }
         
+        // InputManager連携用プロパティ
+        public int LaneIndex => laneIndex;
+        public bool IsJudged => isJudged;
+        
         // プライベートフィールド
         private float targetBeat;
         private bool hasBeenHit;
@@ -335,6 +339,117 @@ namespace Jirou.Gameplay
             
             // スコア減点（ScoreManager実装後）
             // ScoreManager.Instance.OnMiss();
+        }
+        
+        /// <summary>
+        /// 判定処理（InputManagerから呼び出される）
+        /// </summary>
+        public void Judge(JudgmentType judgment)
+        {
+            if (isJudged) return;  // 二重判定防止
+            
+            isJudged = true;
+            isCompleted = true;
+            
+            Debug.Log($"[NoteController] Judged - Lane: {laneIndex}, Judgment: {judgment}, Z: {transform.position.z:F2}");
+            
+            // 判定タイプに応じた処理
+            switch (judgment)
+            {
+                case JudgmentType.Perfect:
+                case JudgmentType.Great:
+                case JudgmentType.Good:
+                    // ヒットエフェクト生成
+                    if (customHitEffect != null)
+                    {
+                        GameObject effect = Instantiate(customHitEffect, transform.position, Quaternion.identity);
+                        Destroy(effect, 0.5f);
+                    }
+                    
+                    // ヒットサウンド再生
+                    if (customHitSound != null)
+                    {
+                        AudioSource.PlayClipAtPoint(customHitSound, transform.position);
+                    }
+                    break;
+                    
+                case JudgmentType.Miss:
+                    // ミス処理
+                    break;
+            }
+            
+            // スコア加算（ScoreManagerが実装されたら連携）
+            // ScoreManager.Instance.AddScore(judgment, noteData);
+            
+            // Holdノーツでない場合は即座に非表示
+            if (!IsHoldNote())
+            {
+                gameObject.SetActive(false);
+            }
+        }
+        
+        /// <summary>
+        /// Holdノーツかどうかを判定
+        /// </summary>
+        public bool IsHoldNote()
+        {
+            return noteType == NoteType.Hold || (noteData != null && noteData.NoteType == NoteType.Hold);
+        }
+        
+        /// <summary>
+        /// Hold開始処理
+        /// </summary>
+        public void StartHold()
+        {
+            if (!IsHoldNote()) return;
+            
+            isHolding = true;
+            Debug.Log($"[NoteController] Hold started - Lane: {laneIndex}");
+            
+            // Hold開始エフェクト（実装予定）
+            // EffectManager.Instance.PlayHoldStartEffect(transform.position);
+        }
+        
+        /// <summary>
+        /// Hold継続処理
+        /// </summary>
+        public void UpdateHold()
+        {
+            if (!isHolding) return;
+            
+            // Hold継続中の視覚効果更新（実装予定）
+            // 例：パーティクルエフェクトの更新、トレイルの延長など
+            
+            // Hold進捗の計算（実装予定）
+            // float progress = CalculateHoldProgress();
+            // OnHoldProgress?.Invoke(progress);
+        }
+        
+        /// <summary>
+        /// Hold終了処理
+        /// </summary>
+        public void EndHold()
+        {
+            if (!isHolding) return;
+            
+            isHolding = false;
+            isCompleted = true;
+            
+            Debug.Log($"[NoteController] Hold ended - Lane: {laneIndex}");
+            
+            // Hold成功判定（実装予定）
+            // bool holdSuccess = CalculateHoldSuccess();
+            // if (holdSuccess)
+            // {
+            //     // 成功エフェクト
+            // }
+            // else
+            // {
+            //     // 失敗エフェクト
+            // }
+            
+            // ノーツを非表示
+            gameObject.SetActive(false);
         }
     }
 }

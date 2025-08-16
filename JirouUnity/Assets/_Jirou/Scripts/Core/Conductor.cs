@@ -494,6 +494,9 @@ namespace Jirou.Core
 
 
 #if UNITY_EDITOR
+        // OnGUIメソッドをコメントアウトしてデバッグ情報を非表示にする
+        // 必要に応じて以下のコメントを解除して再度表示可能
+        /*
         void OnGUI()
         {
             if (!Application.isPlaying) return;
@@ -520,6 +523,7 @@ namespace Jirou.Core
             GUI.Label(new Rect(20, 115, 230, 20), 
                       $"Note Speed: {_noteSpeed}", style);
         }
+        */
 
         void OnDrawGizmos()
         {
