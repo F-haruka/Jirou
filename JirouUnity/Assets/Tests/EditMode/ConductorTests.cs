@@ -2,7 +2,7 @@ using NUnit.Framework;
 using UnityEngine;
 using Jirou.Core;
 
-namespace Jirou.Tests.EditMode
+namespace Jirou.Tests
 {
     /// <summary>
     /// Conductorクラスのユニットテスト

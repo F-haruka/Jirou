@@ -5,7 +5,7 @@ using Jirou.Core;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Jirou.Tests.EditMode
+namespace Jirou.Tests
 {
     /// <summary>
     /// ChartDataのバリデーションと統計機能のテスト

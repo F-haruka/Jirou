@@ -1,7 +1,7 @@
 using NUnit.Framework;
 using UnityEngine;
 
-namespace Jirou.Tests.EditMode
+namespace Jirou.Tests
 {
     /// <summary>
     /// NotePosition3D構造体のユニットテスト

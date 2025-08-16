@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.TestTools;
 using Jirou.Core;
 
-namespace Jirou.Tests.PlayMode
+namespace Jirou.Tests
 {
     public class GameplayIntegrationTests
     {

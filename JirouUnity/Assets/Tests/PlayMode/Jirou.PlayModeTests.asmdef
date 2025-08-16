@@ -1,6 +1,6 @@
 {
     "name": "Jirou.PlayModeTests",
-    "rootNamespace": "Jirou.Tests.PlayMode",
+    "rootNamespace": "Jirou.Tests",
     "references": [
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",

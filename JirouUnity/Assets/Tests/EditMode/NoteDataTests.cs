@@ -1,7 +1,7 @@
 using NUnit.Framework;
 using UnityEngine;
 
-namespace Jirou.Tests.EditMode
+namespace Jirou.Tests
 {
     /// <summary>
     /// NoteDataクラスのユニットテスト
@@ -60,12 +60,10 @@ namespace Jirou.Tests.EditMode
         public void NoteData_GetEndTime_CalculatesCorrectlyForTapNote()
         {
             // Arrange
-            var tapNote = new Core.NoteData
-            {
-                NoteType = Core.NoteType.Tap,
-                TimeToHit = 4.0f,
-                HoldDuration = 2.0f  // Tapノーツでは無視される
-            };
+            var tapNote = new Core.NoteData();
+            tapNote.NoteType = Core.NoteType.Tap;
+            tapNote.TimeToHit = 4.0f;
+            tapNote.HoldDuration = 2.0f;  // Tapノーツでは無視される
             
             // Act
             float endTime = tapNote.GetEndTime();
@@ -78,12 +76,10 @@ namespace Jirou.Tests.EditMode
         public void NoteData_GetEndTime_CalculatesCorrectlyForHoldNote()
         {
             // Arrange
-            var holdNote = new Core.NoteData
-            {
-                NoteType = Core.NoteType.Hold,
-                TimeToHit = 4.0f,
-                HoldDuration = 2.0f
-            };
+            var holdNote = new Core.NoteData();
+            holdNote.NoteType = Core.NoteType.Hold;
+            holdNote.TimeToHit = 4.0f;
+            holdNote.HoldDuration = 2.0f;
             
             // Act
             float endTime = holdNote.GetEndTime();
@@ -96,13 +92,11 @@ namespace Jirou.Tests.EditMode
         public void NoteData_Validate_AcceptsValidData()
         {
             // Arrange
-            var note = new Core.NoteData
-            {
-                NoteType = Core.NoteType.Tap,
-                LaneIndex = 2,
-                TimeToHit = 1.0f,
-                VisualScale = 1.0f
-            };
+            var note = new Core.NoteData();
+            note.NoteType = Core.NoteType.Tap;
+            note.LaneIndex = 2;
+            note.TimeToHit = 1.0f;
+            note.VisualScale = 1.0f;
             
             // Act
             string error;
@@ -135,12 +129,10 @@ namespace Jirou.Tests.EditMode
         public void NoteData_Validate_DetectsNegativeTiming()
         {
             // Arrange
-            var note = new Core.NoteData
-            {
-                LaneIndex = 0,
-                TimeToHit = -1.0f,
-                VisualScale = 1.0f
-            };
+            var note = new Core.NoteData();
+            note.LaneIndex = 0;
+            note.TimeToHit = -1.0f;
+            note.VisualScale = 1.0f;
             
             // Act
             string error;
@@ -155,14 +147,12 @@ namespace Jirou.Tests.EditMode
         public void NoteData_Validate_DetectsInvalidHoldDuration()
         {
             // Arrange
-            var note = new Core.NoteData
-            {
-                NoteType = Core.NoteType.Hold,
-                LaneIndex = 0,
-                TimeToHit = 1.0f,
-                HoldDuration = 0f,  // Holdノーツでは0は無効
-                VisualScale = 1.0f
-            };
+            var note = new Core.NoteData();
+            note.NoteType = Core.NoteType.Hold;
+            note.LaneIndex = 0;
+            note.TimeToHit = 1.0f;
+            note.HoldDuration = 0f;  // Holdノーツでは0は無効
+            note.VisualScale = 1.0f;
             
             // Act
             string error;
@@ -177,11 +167,9 @@ namespace Jirou.Tests.EditMode
         public void NoteData_Validate_DetectsInvalidScale()
         {
             // Arrange
-            var note = new Core.NoteData
-            {
-                LaneIndex = 0,
-                TimeToHit = 1.0f
-            };
+            var note = new Core.NoteData();
+            note.LaneIndex = 0;
+            note.TimeToHit = 1.0f;
             
             // プロパティのセッターがクランプするため、リフレクションで直接フィールドを設定
             var visualScaleField = typeof(Core.NoteData).GetField("_visualScale", 
