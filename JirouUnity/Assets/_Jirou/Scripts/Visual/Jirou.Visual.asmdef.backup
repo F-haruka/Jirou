@@ -2,8 +2,7 @@
     "name": "Jirou.Visual",
     "rootNamespace": "Jirou.Visual",
     "references": [
-        "Jirou.Core",
-        "Unity.RenderPipelines.Universal.Runtime"
+        "Jirou.Core"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
