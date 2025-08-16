@@ -79,19 +79,19 @@ namespace Jirou.Core
         public int LaneIndex
         {
             get => _laneIndex;
-            set => _laneIndex = Mathf.Clamp(value, 0, 3);
+            set => _laneIndex = value;
         }
         
         public float TimeToHit
         {
             get => _timeToHit;
-            set => _timeToHit = Mathf.Max(0f, value);
+            set => _timeToHit = value;
         }
         
         public float HoldDuration
         {
             get => _holdDuration;
-            set => _holdDuration = Mathf.Max(0f, value);
+            set => _holdDuration = value;
         }
         
         public float VisualScale
@@ -176,9 +176,9 @@ namespace Jirou.Core
                 return false;
             }
             
-            if (_visualScale <= 0)
+            if (_visualScale < 0.5f || _visualScale > 2.0f)
             {
-                error = $"不正なスケール値: {_visualScale}";
+                error = $"不正なスケール値: {_visualScale} (範囲: 0.5-2.0)";
                 return false;
             }
             
