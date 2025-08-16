@@ -259,58 +259,6 @@ MonoBehaviour:
     m_MipBias: 0
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
---- !u!1 &378077923
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 378077925}
-  - component: {fileID: 378077924}
-  m_Layer: 0
-  m_Name: TestGameManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &378077924
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 378077923}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 720ea4f1f69220a4f8dd2ef1b52c68f5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  autoSetup: 1
-  generateTestChart: 1
-  testBPM: 180
-  noteCount: 20
-  noteInterval: 1
-  conductor: {fileID: 0}
-  noteSpawner: {fileID: 0}
-  notePoolManager: {fileID: 0}
---- !u!4 &378077925
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 378077923}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.89894176, y: -2.8056154, z: 7.335561}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1527052932
 GameObject:
   m_ObjectHideFlags: 0
@@ -429,67 +377,9 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
---- !u!1 &2146547592
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2146547593}
-  - component: {fileID: 2146547594}
-  m_Layer: 0
-  m_Name: LaneVisualizer
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &2146547593
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2146547592}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0.18332222, y: 0.0123259835, z: -0.0108435415, w: 0.98291576}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: -21.107, y: 1.733, z: -1.587}
---- !u!114 &2146547594
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2146547592}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5f312ee984e222345b25a5b71bb59825, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _laneCount: 4
-  _laneWidth: 2
-  _nearWidth: 2
-  _farWidth: 0.5
-  _laneLength: 20
-  laneMaterial: {fileID: 2100000, guid: 7f0d47b0d3ba4174a90ac75199e5796a, type: 2}
-  _lineWidth: 0.05
-  laneColor: {r: 0.28475437, g: 0.32643107, b: 0.745283, a: 0.3}
-  showCenterLine: 1
-  showOuterBorders: 1
-  syncWithConductor: 1
-  syncUpdateInterval: 1
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 186673645}
   - {fileID: 1527052935}
-  - {fileID: 2146547593}
-  - {fileID: 378077925}
