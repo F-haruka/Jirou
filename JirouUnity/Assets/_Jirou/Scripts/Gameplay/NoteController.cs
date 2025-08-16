@@ -39,10 +39,17 @@ namespace Jirou.Gameplay
             noteData = data;
             conductor = conductorRef;
             targetBeat = data.TimeToHit;
+            laneIndex = data.LaneIndex;  // レーンインデックスを設定
             
             // 初期状態の記録
             initialZ = transform.position.z;
-            initialScale = transform.localScale;
+            // Initialize時のlocalScaleを保持（Prefabからの値）
+            // レーン幅ベースのスケーリングではY軸とZ軸のみ保持
+            if (initialScale == Vector3.zero)
+            {
+                // Y軸とZ軸のスケールのみ保持（X軸はレーン幅で動的に設定）
+                initialScale = new Vector3(1.0f, transform.localScale.y, transform.localScale.z);
+            }
             hasBeenHit = false;
             isCompleted = false;
             
@@ -73,8 +80,13 @@ namespace Jirou.Gameplay
                 targetBeat = noteData.TimeToHit;
             }
             
-            // 初期スケールを記録
-            initialScale = transform.localScale;
+            // 初期スケールを記録（まだ設定されていない場合のみ）
+            // レーン幅ベースのスケーリングではY軸とZ軸のみ保持
+            if (initialScale == Vector3.zero)
+            {
+                // Y軸とZ軸のスケールのみ保持（X軸はレーン幅で動的に設定）
+                initialScale = new Vector3(1.0f, transform.localScale.y, transform.localScale.z);
+            }
             
             // レンダラーをキャッシュ
             renderer = GetComponent<MeshRenderer>();
@@ -92,8 +104,12 @@ namespace Jirou.Gameplay
             
             // 1. Z座標の更新（奥から手前へ移動）
             float newZ = conductor.GetNoteZPosition(targetBeat);
+            
+            // 2. 遠近感を考慮したX座標の更新
+            float perspectiveX = conductor.GetPerspectiveLaneX(laneIndex, newZ);
+            
             transform.position = new Vector3(
-                transform.position.x,
+                perspectiveX,
                 transform.position.y,
                 newZ
             );
@@ -101,13 +117,13 @@ namespace Jirou.Gameplay
             // 最初のフレームだけデバッグログを出力
             if (Time.frameCount % 60 == 0) // 60フレームごとにログ出力
             {
-                Debug.Log($"[NoteController] Moving - TargetBeat: {targetBeat:F2}, CurrentZ: {newZ:F2}, Active: {gameObject.activeSelf}");
+                Debug.Log($"[NoteController] Moving - TargetBeat: {targetBeat:F2}, CurrentZ: {newZ:F2}, PerspectiveX: {perspectiveX:F2}, Active: {gameObject.activeSelf}");
             }
             
-            // 2. 距離に応じたスケール変更
-            ApplyDistanceScaling(newZ);
+            // 3. 距離に応じたスケール変更（遠近感対応）
+            UpdateScale(newZ);
             
-            // 3. 判定ラインを通過したかチェック
+            // 4. 判定ラインを通過したかチェック
             if (newZ < conductor.hitZ - 2.0f)
             {
                 // ミス処理
@@ -159,6 +175,26 @@ namespace Jirou.Gameplay
             
             // ノーツを非表示にする（プーリング対応）
             gameObject.SetActive(false);
+        }
+        
+        /// <summary>
+        /// ノーツの状態をリセット（プール返却時用）
+        /// </summary>
+        public void ResetNote()
+        {
+            // 状態フラグをリセット
+            hasBeenHit = false;
+            isCompleted = false;
+            isJudged = false;
+            isHolding = false;
+            isActive = false;
+            
+            // スケールをリセット（初期値をクリアして次回Initialize時に再設定）
+            // レーン幅ベースのスケーリング用にリセット
+            initialScale = Vector3.zero;
+            
+            // データ参照をクリア
+            noteData = null;
         }
         
         /// <summary>
@@ -222,25 +258,40 @@ namespace Jirou.Gameplay
         }
         
         /// <summary>
-        /// 距離に応じたスケール変更を適用
+        /// Z座標に基づいたスケール更新（遠近感対応・レーン幅対応）
         /// </summary>
-        private void ApplyDistanceScaling(float currentZ)
+        private void UpdateScale(float zPosition)
         {
-            // 距離の比率を計算（0=手前、1=奥）
-            float distanceRatio = Mathf.Clamp01(currentZ / conductor.spawnZ);
+            if (conductor == null) return;
             
-            // スケール係数を計算（手前1.5倍、奥0.5倍）
-            float scaleFactor = Mathf.Lerp(1.5f, 0.5f, distanceRatio);
+            // 現在のZ座標でのレーン幅を取得
+            float laneWidth = conductor.GetLaneWidthAtZ(zPosition);
+            
+            // Conductorの統一されたスケール値を取得（Y軸とZ軸用）
+            float distanceScale = conductor.GetScaleAtZ(zPosition);
             
             // NoteDataのVisualScaleも考慮
-            float finalScale = scaleFactor;
+            float visualScale = 1.0f;
             if (noteData != null)
             {
-                finalScale *= noteData.VisualScale;
+                visualScale = noteData.VisualScale;
             }
             
+            // X軸はレーンの幅と同じ値、Y軸とZ軸は初期値に距離スケールを適用
+            Vector3 newScale = new Vector3(
+                laneWidth * visualScale,  // X軸はレーンの幅と同じ値に設定（VisualScaleも考慮）
+                initialScale.y * distanceScale * visualScale,  // Y軸は初期値と距離スケール
+                initialScale.z * distanceScale * visualScale   // Z軸は初期値と距離スケール
+            );
+            
             // スケールを適用
-            transform.localScale = initialScale * finalScale;
+            transform.localScale = newScale;
+            
+            // デバッグログ（1秒に1回程度）
+            if (Time.frameCount % 60 == 0)
+            {
+                Debug.Log($"[NoteController] UpdateScale - Z: {zPosition:F2}, レーン幅: {laneWidth:F2}, 距離スケール: {distanceScale:F2}, 最終スケール: {newScale}");
+            }
         }
         
         /// <summary>

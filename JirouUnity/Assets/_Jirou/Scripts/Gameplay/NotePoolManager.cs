@@ -57,6 +57,10 @@ namespace Jirou.Gameplay
         private Queue<GameObject> holdNotePool = new Queue<GameObject>();
         private Transform poolContainer;
         
+        // Prefabの元のスケールを保持
+        private Vector3 tapNotePrefabScale;
+        private Vector3 holdNotePrefabScale;
+        
         // 統計情報
         private int totalTapCreated = 0;
         private int totalHoldCreated = 0;
@@ -98,7 +102,8 @@ namespace Jirou.Gameplay
         {
             // プールコンテナの作成
             poolContainer = new GameObject("NotePoolContainer").transform;
-            poolContainer.SetParent(transform);
+            poolContainer.SetParent(transform, false);  // falseでワールド位置を維持
+            poolContainer.localScale = Vector3.one;  // スケールを明示的に(1,1,1)に設定
             
             // プレハブの検証
             if (!ValidatePrefabs())
@@ -126,6 +131,18 @@ namespace Jirou.Gameplay
                     if (tapNotePrefab == null) tapNotePrefab = spawner.tapNotePrefab;
                     if (holdNotePrefab == null) holdNotePrefab = spawner.holdNotePrefab;
                 }
+            }
+            
+            // Prefabの元のスケールを保存
+            if (tapNotePrefab != null)
+            {
+                tapNotePrefabScale = tapNotePrefab.transform.localScale;
+                LogDebug($"TapNote Prefabスケール保存: {tapNotePrefabScale}");
+            }
+            if (holdNotePrefab != null)
+            {
+                holdNotePrefabScale = holdNotePrefab.transform.localScale;
+                LogDebug($"HoldNote Prefabスケール保存: {holdNotePrefabScale}");
             }
             
             return tapNotePrefab != null && holdNotePrefab != null;
@@ -160,7 +177,17 @@ namespace Jirou.Gameplay
         private GameObject CreateNewNote(NoteType type)
         {
             GameObject prefab = type == NoteType.Tap ? tapNotePrefab : holdNotePrefab;
-            GameObject note = Instantiate(prefab, poolContainer);
+            // 親を指定せずにインスタンス化
+            GameObject note = Instantiate(prefab);
+            
+            // Prefabのスケールを保持
+            Vector3 originalScale = type == NoteType.Tap ? tapNotePrefabScale : holdNotePrefabScale;
+            note.transform.localScale = originalScale;
+            
+            // スケール設定後に親を設定（worldPositionStays=falseでローカル座標を維持）
+            note.transform.SetParent(poolContainer, false);
+            
+            LogDebug($"新規{type}ノート作成 - スケール: {originalScale}, 実際のスケール: {note.transform.localScale}");
             
             // 統計情報の更新
             if (type == NoteType.Tap)
@@ -197,7 +224,7 @@ namespace Jirou.Gameplay
                     else
                         holdPoolHits++;
                     
-                    LogDebug($"プールから{type}ノーツを取得 (残り: {pool.Count})");
+                    LogDebug($"プールから{type}ノーツを取得 (残り: {pool.Count}), スケール: {note.transform.localScale}");
                     return note;
                 }
             }
@@ -229,14 +256,14 @@ namespace Jirou.Gameplay
         {
             if (note == null) return;
             
-            // ノーツをリセット
-            ResetNote(note);
+            // ノーツをリセット（タイプを渡す）
+            ResetNote(note, type);
             
             // 非アクティブ化
             note.SetActive(false);
             
-            // プールコンテナの子として配置
-            note.transform.SetParent(poolContainer);
+            // プールコンテナの子として配置（スケールを維持）
+            note.transform.SetParent(poolContainer, false);
             
             // 適切なプールに返却
             Queue<GameObject> pool = type == NoteType.Tap ? tapNotePool : holdNotePool;
@@ -315,6 +342,23 @@ namespace Jirou.Gameplay
             holdPoolSize = holdNotePool.Count;
         }
         
+        /// <summary>
+        /// Prefabの元のスケールを取得
+        /// </summary>
+        public Vector3 GetPrefabScale(NoteType type)
+        {
+            // Prefabスケールがまだ取得されていない場合は取得
+            if (tapNotePrefabScale == Vector3.zero || holdNotePrefabScale == Vector3.zero)
+            {
+                ValidatePrefabs();
+                LogDebug($"GetPrefabScale - Prefabスケール再取得 Tap: {tapNotePrefabScale}, Hold: {holdNotePrefabScale}");
+            }
+            
+            Vector3 scale = type == NoteType.Tap ? tapNotePrefabScale : holdNotePrefabScale;
+            LogDebug($"GetPrefabScale - {type}タイプのスケール: {scale}");
+            return scale;
+        }
+        
         // ========== プライベートメソッド ==========
         
         private bool CanCreateNew(NoteType type)
@@ -323,19 +367,22 @@ namespace Jirou.Gameplay
             return currentTotal < maxPoolSize;
         }
         
-        private void ResetNote(GameObject note)
+        private void ResetNote(GameObject note, NoteType type)
         {
-            // 位置とスケールをリセット
+            // 位置と回転をリセット
             note.transform.position = Vector3.zero;
             note.transform.rotation = Quaternion.identity;
-            note.transform.localScale = Vector3.one;
+            
+            // スケールはPrefabの元の値を使用
+            Vector3 originalScale = type == NoteType.Tap ? tapNotePrefabScale : holdNotePrefabScale;
+            note.transform.localScale = originalScale;
+            LogDebug($"{type}ノートリセット - スケール: {originalScale}, 実際のスケール: {note.transform.localScale}");
             
             // NoteControllerのリセット
             NoteController controller = note.GetComponent<NoteController>();
             if (controller != null)
             {
-                // コントローラーの状態をリセット（リセットメソッドが存在する場合）
-                // controller.Initialize(null, null); // 適切なリセット処理に置き換え
+                controller.ResetNote();
             }
             
             // レンダラーの色をリセット

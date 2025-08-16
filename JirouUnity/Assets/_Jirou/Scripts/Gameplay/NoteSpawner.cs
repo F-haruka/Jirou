@@ -53,6 +53,7 @@ namespace Jirou.Gameplay
         private Conductor conductor;
         private NotePoolManager notePool;
         private bool isSpawning = false;
+        private bool isInitialized = false;  // 初期化済みフラグ
         
         // パフォーマンス最適化用
         private float lastSpawnCheckBeat = -1f;
@@ -62,19 +63,44 @@ namespace Jirou.Gameplay
         
         void Awake()
         {
-            // 依存コンポーネントの取得
-            InitializeDependencies();
+            // Awakeでは何もしない（依存関係の取得はStartで行う）
         }
         
         void Start()
         {
-            // 初期化処理
-            Initialize();
+            // 依存コンポーネントの取得
+            InitializeDependencies();
             
-            // 自動開始が有効な場合のみ楽曲を開始
-            if (autoStart)
+            // Conductorから設定を取得
+            if (conductor != null)
             {
-                StartSpawning();
+                // レーン位置をConductorから取得
+                laneXPositions = conductor.LaneXPositions;
+                noteY = conductor.NoteY;
+                
+                LogDebug($"Conductorからレーン設定を取得: レーン数={laneXPositions.Length}");
+            }
+            else
+            {
+                Debug.LogWarning("[NoteSpawner] Conductorが見つかりません。デフォルト設定を使用します。");
+            }
+            
+            // ChartDataが設定されている場合のみ初期化処理を実行
+            // TestSetupから後で設定される場合があるため、ここではスキップ可能
+            if (chartData != null)
+            {
+                // 初期化処理
+                Initialize();
+                
+                // 自動開始が有効な場合のみ楽曲を開始
+                if (autoStart)
+                {
+                    StartSpawning();
+                }
+            }
+            else
+            {
+                LogDebug("[NoteSpawner] ChartDataが未設定のため、初期化をスキップします");
             }
         }
         
@@ -118,6 +144,9 @@ namespace Jirou.Gameplay
         
         private void Initialize()
         {
+            // 既に初期化済みの場合はスキップ
+            if (isInitialized) return;
+            
             // データ検証
             if (!ValidateData())
             {
@@ -127,6 +156,9 @@ namespace Jirou.Gameplay
             
             // 譜面データのソート
             chartData.SortNotesByTime();
+            
+            // 初期化完了フラグを設定
+            isInitialized = true;
             
             // 初期化完了ログ
             LogDebug($"NoteSpawner初期化完了 - 総ノーツ数: {chartData.Notes.Count}");
@@ -170,6 +202,12 @@ namespace Jirou.Gameplay
         
         public void StartSpawning()
         {
+            // ChartDataが設定されていて、まだ初期化されていない場合は初期化を実行
+            if (chartData != null && !isInitialized)
+            {
+                Initialize();
+            }
+            
             if (conductor == null || chartData == null) 
             {
                 Debug.LogError($"[NoteSpawner] StartSpawning失敗 - conductor is null: {conductor == null}, chartData is null: {chartData == null}");
@@ -284,6 +322,28 @@ namespace Jirou.Gameplay
             Vector3 spawnPos = CalculateSpawnPosition(noteData);
             noteObject.transform.position = spawnPos;
             
+            // レーンの幅を取得（生成位置での幅）
+            float laneWidth = conductor.GetLaneWidthAtZ(conductor.SpawnZ);
+            
+            // Prefabの元のスケールを取得
+            Vector3 prefabScale = notePool.GetPrefabScale(noteData.NoteType);
+            
+            // 初期スケールを遠近感に応じて設定（Prefabのスケールを基準に）
+            float distanceScale = conductor.GetScaleAtZ(conductor.SpawnZ);
+            
+            // ノーツの幅をレーンの幅に合わせる
+            // X軸のスケールをレーンの幅に合わせる（レーンの幅を基準に）
+            Vector3 adjustedScale = new Vector3(
+                laneWidth,  // X軸はレーンの幅と同じ値に設定
+                prefabScale.y * distanceScale,  // Y軸は元のスケールと距離による遠近感を適用
+                prefabScale.z * distanceScale   // Z軸も元のスケールと距離による遠近感を適用
+            );
+            
+            noteObject.transform.localScale = adjustedScale;
+            
+            // デバッグ: スケールの適用を確認
+            Debug.Log($"[NoteSpawner] スケール設定 - レーン幅: {laneWidth:F2}, Prefabスケール: {prefabScale}, 距離スケール: {distanceScale:F2}, 最終スケール: {noteObject.transform.localScale}");
+            
             // NoteControllerコンポーネントの設定
             NoteController controller = noteObject.GetComponent<NoteController>();
             if (controller != null)
@@ -305,7 +365,7 @@ namespace Jirou.Gameplay
             activeNotes.Add(noteObject);
             
             LogDebug($"ノーツ生成 - タイプ: {noteData.NoteType}, レーン: {noteData.LaneIndex}, " +
-                    $"タイミング: {noteData.TimeToHit:F2}ビート, 位置: {spawnPos}, Active: {noteObject.activeSelf}");
+                    $"タイミング: {noteData.TimeToHit:F2}ビート, 位置: {spawnPos}, スケール: {distanceScale:F2}, Active: {noteObject.activeSelf}");
         }
         
         private Vector3 CalculateSpawnPosition(NoteData noteData)
@@ -313,20 +373,21 @@ namespace Jirou.Gameplay
             // レーンインデックスの検証
             int laneIndex = Mathf.Clamp(noteData.LaneIndex, 0, laneXPositions.Length - 1);
             
+            // X座標を遠近感を考慮して設定
+            float xPos = conductor.GetPerspectiveLaneX(laneIndex, conductor.SpawnZ);
+            
             return new Vector3(
-                laneXPositions[laneIndex],
+                xPos,
                 noteY,
-                conductor.spawnZ
+                conductor.SpawnZ
             );
         }
         
         private void ApplyNoteCustomization(GameObject noteObject, NoteData noteData)
         {
-            // スケールの適用
-            if (noteData.VisualScale != 1.0f)
-            {
-                noteObject.transform.localScale = Vector3.one * noteData.VisualScale;
-            }
+            // スケールの適用（現在のスケールを基準に）
+            // VisualScaleはNoteControllerのUpdateScaleメソッドで適用されるため、ここでは適用しない
+            // （レーン幅ベースのスケーリングと競合を避けるため）
             
             // 色の適用
             if (noteData.NoteColor != Color.white)
@@ -528,67 +589,8 @@ namespace Jirou.Gameplay
         
         void OnDrawGizmos()
         {
-            if (!showNotePathGizmo) return;
-            
-            // レーンの可視化
-            if (laneXPositions != null && laneXPositions.Length == 4)
-            {
-                float spawnZ = conductor != null ? conductor.spawnZ : 20f;
-                float hitZ = conductor != null ? conductor.hitZ : 0f;
-                
-                for (int i = 0; i < laneXPositions.Length; i++)
-                {
-                    // レーンの中心線
-                    Gizmos.color = new Color(0.5f, 0.5f, 1f, 0.5f);
-                    Gizmos.DrawLine(
-                        new Vector3(laneXPositions[i], noteY, spawnZ),
-                        new Vector3(laneXPositions[i], noteY, hitZ)
-                    );
-                    
-                    // レーンの境界
-                    float laneWidth = 0.8f;
-                    Gizmos.color = new Color(0.3f, 0.3f, 0.8f, 0.3f);
-                    
-                    // 左境界
-                    Gizmos.DrawLine(
-                        new Vector3(laneXPositions[i] - laneWidth/2, noteY, spawnZ),
-                        new Vector3(laneXPositions[i] - laneWidth/2, noteY, hitZ)
-                    );
-                    
-                    // 右境界
-                    Gizmos.DrawLine(
-                        new Vector3(laneXPositions[i] + laneWidth/2, noteY, spawnZ),
-                        new Vector3(laneXPositions[i] + laneWidth/2, noteY, hitZ)
-                    );
-                }
-                
-                // スポーンライン
-                Gizmos.color = Color.green;
-                Gizmos.DrawLine(
-                    new Vector3(laneXPositions[0] - 1f, noteY, spawnZ),
-                    new Vector3(laneXPositions[3] + 1f, noteY, spawnZ)
-                );
-                
-                // 判定ライン
-                Gizmos.color = Color.red;
-                Gizmos.DrawLine(
-                    new Vector3(laneXPositions[0] - 1f, noteY, hitZ),
-                    new Vector3(laneXPositions[3] + 1f, noteY, hitZ)
-                );
-            }
-            
-            // アクティブノーツの可視化
-            if (Application.isPlaying && activeNotes != null)
-            {
-                foreach (GameObject note in activeNotes)
-                {
-                    if (note != null)
-                    {
-                        Gizmos.color = new Color(1f, 1f, 0f, 0.5f);
-                        Gizmos.DrawWireCube(note.transform.position, Vector3.one * 0.5f);
-                    }
-                }
-            }
+            // Gizmo表示を完全に無効化
+            return;
         }
 #endif
     }

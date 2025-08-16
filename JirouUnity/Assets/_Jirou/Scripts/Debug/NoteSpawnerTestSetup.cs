@@ -33,18 +33,13 @@ namespace Jirou.Testing
         public NoteSpawner noteSpawner;
         public NotePoolManager notePoolManager;
         
-        void Awake()
+        void Start()
         {
-            // AwakeでセットアップすることでNoteSpawnerのStart()より先に実行される
+            // StartでセットアップしてConductorが確実に初期化されるようにする
             if (autoSetup)
             {
                 SetupTestEnvironment();
             }
-        }
-        
-        void Start()
-        {
-            // Start()では何もしない（既にAwakeで処理済み）
         }
         
         /// <summary>
@@ -54,23 +49,31 @@ namespace Jirou.Testing
         {
             Debug.Log("[NoteSpawnerTestSetup] テスト環境のセットアップを開始");
             
-            // 1. Conductorのセットアップ
+            // 1. Conductorのセットアップ（最優先）
             SetupConductor();
             
-            // 2. NotePoolManagerのセットアップ
+            // 2. LaneVisualizerがあれば同期を強制
+            Jirou.Visual.LaneVisualizer laneVis = FindObjectOfType<Jirou.Visual.LaneVisualizer>();
+            if (laneVis != null)
+            {
+                laneVis.ForceSync();
+                Debug.Log("[NoteSpawnerTestSetup] LaneVisualizerをConductorと同期しました");
+            }
+            
+            // 3. NotePoolManagerのセットアップ
             SetupNotePoolManager();
             
-            // 3. NoteSpawnerのセットアップ
+            // 4. NoteSpawnerのセットアップ
             SetupNoteSpawner();
             
-            // 4. テスト用譜面データの生成
+            // 5. プレハブの作成（譜面データ生成前にプレハブが必要）
+            CreateTestPrefabs();
+            
+            // 6. テスト用譜面データの生成（NoteSpawnerセットアップ後に実行）
             if (generateTestChart)
             {
                 GenerateTestChart();
             }
-            
-            // 5. プレハブの作成
-            CreateTestPrefabs();
             
             Debug.Log("[NoteSpawnerTestSetup] テスト環境のセットアップ完了");
             Debug.Log($"[NoteSpawnerTestSetup] tapNotePrefab is null: {noteSpawner.tapNotePrefab == null}");
@@ -150,7 +153,12 @@ namespace Jirou.Testing
             // BPMを180に設定（End_Time.wavに合わせて）
             conductor.songBpm = 180f;
             
-            Debug.Log($"[NoteSpawnerTestSetup] Conductorをセットアップしました (BPM: {conductor.songBpm})");
+            // 遠近感設定（統一された値を設定）
+            // これらの値はConductorのデフォルト値として設定済みですが、明示的に設定することも可能
+            // conductor.PerspectiveNearScale = 1.0f;  // 読み取り専用プロパティなので設定不要
+            // conductor.PerspectiveFarScale = 0.25f;  // 読み取り専用プロパティなので設定不要
+            
+            Debug.Log($"[NoteSpawnerTestSetup] Conductorをセットアップしました (BPM: {conductor.songBpm}, 遠近感: Near={conductor.PerspectiveNearScale}, Far={conductor.PerspectiveFarScale})");
         }
         
         /// <summary>
@@ -189,16 +197,31 @@ namespace Jirou.Testing
                 {
                     noteSpawner = spawnerGO.AddComponent<NoteSpawner>();
                 }
+            }
+            
+            // Conductorとの同期を確認
+            if (conductor != null)
+            {
+                // Conductorからレーン設定を取得
+                noteSpawner.laneXPositions = conductor.LaneXPositions;
+                noteSpawner.noteY = conductor.NoteY;
                 
-                // デフォルト設定
+                Debug.Log($"[NoteSpawnerTestSetup] Conductorのレーン設定を適用: {string.Join(", ", noteSpawner.laneXPositions)}");
+            }
+            else
+            {
+                // デフォルト設定（既存）
                 noteSpawner.laneXPositions = new float[] { -3f, -1f, 1f, 3f };
                 noteSpawner.noteY = 0.5f;
-                noteSpawner.beatsShownInAdvance = 3.0f;
-                noteSpawner.enableDebugLog = true;
-                noteSpawner.showNotePathGizmo = true;
-                
-                Debug.Log("[NoteSpawnerTestSetup] NoteSpawnerをセットアップしました");
             }
+            
+            // その他の設定
+            noteSpawner.beatsShownInAdvance = 3.0f;
+            noteSpawner.enableDebugLog = true;
+            noteSpawner.showNotePathGizmo = false;  // Gizmo表示を無効化
+            noteSpawner.autoStart = false;  // TestSetupが制御するため自動開始は無効
+            
+            Debug.Log("[NoteSpawnerTestSetup] NoteSpawnerをセットアップしました");
         }
         
         /// <summary>
@@ -233,7 +256,8 @@ namespace Jirou.Testing
                 noteType.GetField("_laneIndex", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).SetValue(note, UnityEngine.Random.Range(0, 4));
                 noteType.GetField("_timeToHit", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).SetValue(note, (i + 1) * noteInterval);
                 noteType.GetField("_visualScale", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).SetValue(note, 1.0f);
-                noteType.GetField("_noteColor", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).SetValue(note, GetRandomColor());
+                // 色の設定を削除（マテリアルの色を使用）
+                // noteType.GetField("_noteColor", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).SetValue(note, GetRandomColor());
                 noteType.GetField("_scoreMultiplier", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).SetValue(note, 1.0f);
                 
                 // Holdノーツの場合は長さを設定
@@ -324,24 +348,7 @@ namespace Jirou.Testing
             return prefab;
         }
         
-        /// <summary>
-        /// ランダムな色を取得
-        /// </summary>
-        private Color GetRandomColor()
-        {
-            Color[] colors = new Color[]
-            {
-                Color.red,
-                Color.green,
-                Color.blue,
-                Color.yellow,
-                Color.magenta,
-                Color.cyan,
-                Color.white
-            };
-            
-            return colors[UnityEngine.Random.Range(0, colors.Length)];
-        }
+        // GetRandomColor関数は削除（マテリアルの色を使用するため不要）
         
         /// <summary>
         /// テストを開始

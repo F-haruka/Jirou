@@ -210,19 +210,27 @@ namespace Jirou.Visual
         {
             int lines = 0;
             
-            // 外枠（左右2本）
-            if (showOuterBorders)
+            if (conductor != null)
             {
-                lines += 2;
+                // Conductorを使用する場合は5本の境界線（左端、レーン間3本、右端）
+                lines = conductor.LaneXPositions.Length + 1;
             }
-            
-            // レーン区切り線（レーン数-1本）
-            lines += laneCount - 1;
-            
-            // 中央ライン（1本）
-            if (showCenterLine && laneCount % 2 == 0)
+            else
             {
-                lines += 1;
+                // 外枠（左右2本）
+                if (showOuterBorders)
+                {
+                    lines += 2;
+                }
+                
+                // レーン区切り線（レーン数-1本）
+                lines += laneCount - 1;
+                
+                // 中央ライン（1本）
+                if (showCenterLine && laneCount % 2 == 0)
+                {
+                    lines += 1;
+                }
             }
             
             return lines;
@@ -235,19 +243,27 @@ namespace Jirou.Visual
         {
             int lineIndex = 0;
             
-            // 外枠の生成
-            if (showOuterBorders)
+            if (conductor != null)
             {
-                CreateBorderLines(ref lineIndex);
+                // Conductorを使用する場合は区切り線のみ生成
+                CreateDividerLines(ref lineIndex);
             }
-            
-            // レーン区切り線の生成
-            CreateDividerLines(ref lineIndex);
-            
-            // 中央ラインの生成
-            if (showCenterLine && laneCount % 2 == 0)
+            else
             {
-                CreateCenterLine(ref lineIndex);
+                // 外枠の生成
+                if (showOuterBorders)
+                {
+                    CreateBorderLines(ref lineIndex);
+                }
+                
+                // レーン区切り線の生成
+                CreateDividerLines(ref lineIndex);
+                
+                // 中央ラインの生成
+                if (showCenterLine && laneCount % 2 == 0)
+                {
+                    CreateCenterLine(ref lineIndex);
+                }
             }
         }
 
@@ -276,15 +292,56 @@ namespace Jirou.Visual
         /// </summary>
         private void CreateDividerLines(ref int lineIndex)
         {
-            for (int i = 0; i < laneCount - 1; i++)
+            if (conductor != null)
             {
-                float x = CalculateDividerX(i);
-                Vector3 nearPoint = new Vector3(x * nearWidth, 0, 0);
-                Vector3 farPoint = new Vector3(x * farWidth, 0, laneLength);
+                // Conductorのレーン位置を使用
+                float[] lanePositions = conductor.LaneXPositions;
                 
-                string lineName = $"Divider_{i}";
-                laneRenderers[lineIndex] = CreateSingleLine(lineName, nearPoint, farPoint);
-                lineIndex++;
+                // レーン間の境界線を作成（5本）
+                for (int i = 0; i <= lanePositions.Length; i++)
+                {
+                    float x;
+                    if (i == 0)
+                    {
+                        // 左端の境界線
+                        x = lanePositions[0] - conductor.LaneWidth;
+                    }
+                    else if (i == lanePositions.Length)
+                    {
+                        // 右端の境界線
+                        x = lanePositions[lanePositions.Length - 1] + conductor.LaneWidth;
+                    }
+                    else
+                    {
+                        // レーン間の境界線
+                        x = (lanePositions[i - 1] + lanePositions[i]) / 2f;
+                    }
+                    
+                    // Conductorの統一された遠近感設定を使用
+                    float nearX = x * conductor.PerspectiveNearScale;
+                    float farX = x * conductor.PerspectiveFarScale;
+                    
+                    Vector3 nearPoint = transform.position + new Vector3(nearX, 0, 0);
+                    Vector3 farPoint = transform.position + new Vector3(farX, 0, laneLength);
+                    
+                    string lineName = $"Divider_{i}";
+                    laneRenderers[lineIndex] = CreateSingleLine(lineName, nearPoint - transform.position, farPoint - transform.position);
+                    lineIndex++;
+                }
+            }
+            else
+            {
+                // 既存の実装（フォールバック）
+                for (int i = 0; i < laneCount - 1; i++)
+                {
+                    float x = CalculateDividerX(i);
+                    Vector3 nearPoint = new Vector3(x * nearWidth, 0, 0);
+                    Vector3 farPoint = new Vector3(x * farWidth, 0, laneLength);
+                    
+                    string lineName = $"Divider_{i}";
+                    laneRenderers[lineIndex] = CreateSingleLine(lineName, nearPoint, farPoint);
+                    lineIndex++;
+                }
             }
         }
 
@@ -330,18 +387,25 @@ namespace Jirou.Visual
         /// </summary>
         public float CalculateLaneX(int laneIndex, bool isNear)
         {
-            // レーンの中心位置を計算
-            float totalWidth = laneCount * laneWidth;
-            float startX = -totalWidth / 2.0f + laneWidth / 2.0f;
-            float x = startX + (laneIndex * laneWidth);
-            
-            // 遠近感を適用
-            if (!isNear)
+            if (conductor != null)
             {
-                x *= (farWidth / nearWidth);
+                // Conductorの統一された遠近感メソッドを使用
+                return conductor.GetPerspectiveLaneX(laneIndex, isNear ? 0f : conductor.SpawnZ);
             }
-            
-            return x;
+            else
+            {
+                // フォールバック：既存の計算方法（Conductorがない場合）
+                float totalWidth = laneCount * laneWidth;
+                float startX = -totalWidth / 2.0f + laneWidth / 2.0f;
+                float x = startX + (laneIndex * laneWidth);
+                
+                if (!isNear)
+                {
+                    x *= (farWidth / nearWidth);
+                }
+                
+                return x;
+            }
         }
 
         /// <summary>
@@ -488,16 +552,20 @@ namespace Jirou.Visual
             // SpawnZからレーン長を自動設定
             float newLaneLength = conductor.SpawnZ;
             
+            // レーン数をConductorから取得
+            int conductorLaneCount = conductor.GetLaneCount();
+            
             // 値が変更された場合のみ更新
-            if (Mathf.Abs(_laneLength - newLaneLength) > 0.01f)
+            if (Mathf.Abs(_laneLength - newLaneLength) > 0.01f || _laneCount != conductorLaneCount)
             {
                 _laneLength = newLaneLength;
+                _laneCount = conductorLaneCount;
                 
                 // レーンを再生成
                 if (Application.isPlaying && laneContainer != null)
                 {
                     UpdateLanes();
-                    Debug.Log($"[LaneVisualizer] レーン長をConductorと同期: {_laneLength}");
+                    Debug.Log($"[LaneVisualizer] Conductorと同期: レーン長={_laneLength}, レーン数={_laneCount}");
                 }
             }
         }
@@ -547,11 +615,8 @@ namespace Jirou.Visual
         /// </summary>
         void OnDrawGizmos()
         {
-            // エディタ上でプレビュー表示
-            if (!Application.isPlaying)
-            {
-                DrawPreviewGizmos();
-            }
+            // Gizmo表示を完全に無効化
+            return;
         }
 
         /// <summary>
