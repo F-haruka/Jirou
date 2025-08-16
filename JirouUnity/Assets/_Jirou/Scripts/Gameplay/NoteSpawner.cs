@@ -322,9 +322,27 @@ namespace Jirou.Gameplay
             Vector3 spawnPos = CalculateSpawnPosition(noteData);
             noteObject.transform.position = spawnPos;
             
-            // 初期スケールを遠近感に応じて設定
-            float initialScale = conductor.GetScaleAtZ(conductor.SpawnZ);
-            noteObject.transform.localScale = Vector3.one * initialScale;
+            // レーンの幅を取得（生成位置での幅）
+            float laneWidth = conductor.GetLaneWidthAtZ(conductor.SpawnZ);
+            
+            // Prefabの元のスケールを取得
+            Vector3 prefabScale = notePool.GetPrefabScale(noteData.NoteType);
+            
+            // 初期スケールを遠近感に応じて設定（Prefabのスケールを基準に）
+            float distanceScale = conductor.GetScaleAtZ(conductor.SpawnZ);
+            
+            // ノーツの幅をレーンの幅に合わせる
+            // X軸のスケールをレーンの幅に合わせる（レーンの幅を基準に）
+            Vector3 adjustedScale = new Vector3(
+                laneWidth,  // X軸はレーンの幅と同じ値に設定
+                prefabScale.y * distanceScale,  // Y軸は元のスケールと距離による遠近感を適用
+                prefabScale.z * distanceScale   // Z軸も元のスケールと距離による遠近感を適用
+            );
+            
+            noteObject.transform.localScale = adjustedScale;
+            
+            // デバッグ: スケールの適用を確認
+            Debug.Log($"[NoteSpawner] スケール設定 - レーン幅: {laneWidth:F2}, Prefabスケール: {prefabScale}, 距離スケール: {distanceScale:F2}, 最終スケール: {noteObject.transform.localScale}");
             
             // NoteControllerコンポーネントの設定
             NoteController controller = noteObject.GetComponent<NoteController>();
@@ -347,7 +365,7 @@ namespace Jirou.Gameplay
             activeNotes.Add(noteObject);
             
             LogDebug($"ノーツ生成 - タイプ: {noteData.NoteType}, レーン: {noteData.LaneIndex}, " +
-                    $"タイミング: {noteData.TimeToHit:F2}ビート, 位置: {spawnPos}, スケール: {initialScale:F2}, Active: {noteObject.activeSelf}");
+                    $"タイミング: {noteData.TimeToHit:F2}ビート, 位置: {spawnPos}, スケール: {distanceScale:F2}, Active: {noteObject.activeSelf}");
         }
         
         private Vector3 CalculateSpawnPosition(NoteData noteData)
@@ -367,11 +385,9 @@ namespace Jirou.Gameplay
         
         private void ApplyNoteCustomization(GameObject noteObject, NoteData noteData)
         {
-            // スケールの適用
-            if (noteData.VisualScale != 1.0f)
-            {
-                noteObject.transform.localScale = Vector3.one * noteData.VisualScale;
-            }
+            // スケールの適用（現在のスケールを基準に）
+            // VisualScaleはNoteControllerのUpdateScaleメソッドで適用されるため、ここでは適用しない
+            // （レーン幅ベースのスケーリングと競合を避けるため）
             
             // 色の適用
             if (noteData.NoteColor != Color.white)
