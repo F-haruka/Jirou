@@ -12,38 +12,48 @@ namespace Jirou.Editor
     [CustomEditor(typeof(ChartData))]
     public class ChartDataEditor : UnityEditor.Editor
     {
-        private ChartData chartData;
-        private bool showStatistics = true;
-        private bool showValidation = false;
-        private List<string> validationErrors = new List<string>();
+        private ChartData _chartData;
+        private bool _showStatistics = true;
+        private bool _showValidation = false;
+        private List<string> _validationErrors = new List<string>();
         
         void OnEnable()
         {
-            chartData = (ChartData)target;
+            _chartData = (ChartData)target;
         }
         
         public override void OnInspectorGUI()
         {
-            // デフォルトインスペクターを描画
             DrawDefaultInspector();
             
             EditorGUILayout.Space();
-            
-            // ツールボタン
             DrawToolButtons();
             
             EditorGUILayout.Space();
+            DrawStatisticsSection();
             
-            // 統計情報
-            showStatistics = EditorGUILayout.Foldout(showStatistics, "統計情報", true);
-            if (showStatistics)
+            DrawValidationSection();
+        }
+        
+        /// <summary>
+        /// 統計情報セクションを描画
+        /// </summary>
+        private void DrawStatisticsSection()
+        {
+            _showStatistics = EditorGUILayout.Foldout(_showStatistics, "統計情報", true);
+            if (_showStatistics)
             {
                 DrawStatistics();
             }
-            
-            // バリデーション結果
-            showValidation = EditorGUILayout.Foldout(showValidation, "バリデーション", true);
-            if (showValidation)
+        }
+        
+        /// <summary>
+        /// バリデーションセクションを描画
+        /// </summary>
+        private void DrawValidationSection()
+        {
+            _showValidation = EditorGUILayout.Foldout(_showValidation, "バリデーション", true);
+            if (_showValidation)
             {
                 DrawValidation();
             }
@@ -53,44 +63,45 @@ namespace Jirou.Editor
         {
             EditorGUILayout.LabelField("ツール", EditorStyles.boldLabel);
             
+            DrawFirstRowButtons();
+            DrawSecondRowButtons();
+        }
+        
+        /// <summary>
+        /// ツールボタンの1行目を描画
+        /// </summary>
+        private void DrawFirstRowButtons()
+        {
             EditorGUILayout.BeginHorizontal();
             
             if (GUILayout.Button("ノーツをソート"))
             {
-                Undo.RecordObject(chartData, "Sort Notes");
-                chartData.SortNotesByTime();
-                EditorUtility.SetDirty(chartData);
+                SortNotes();
             }
             
             if (GUILayout.Button("譜面を検証"))
             {
-                bool isValid = chartData.ValidateChart(out validationErrors);
-                showValidation = true;
-                
-                if (isValid)
-                {
-                    EditorUtility.DisplayDialog("検証結果", "譜面データは正常です", "OK");
-                }
+                ValidateChart();
             }
             
             if (GUILayout.Button("デバッグ情報出力"))
             {
-                chartData.PrintDebugInfo();
+                _chartData.PrintDebugInfo();
             }
             
             EditorGUILayout.EndHorizontal();
-            
+        }
+        
+        /// <summary>
+        /// ツールボタンの2行目を描画
+        /// </summary>
+        private void DrawSecondRowButtons()
+        {
             EditorGUILayout.BeginHorizontal();
             
             if (GUILayout.Button("すべてのノーツをクリア"))
             {
-                if (EditorUtility.DisplayDialog("確認", 
-                    "すべてのノーツを削除しますか？", "削除", "キャンセル"))
-                {
-                    Undo.RecordObject(chartData, "Clear All Notes");
-                    chartData.notes.Clear();
-                    EditorUtility.SetDirty(chartData);
-                }
+                ClearAllNotes();
             }
             
             if (GUILayout.Button("テストノーツを追加"))
@@ -101,29 +112,99 @@ namespace Jirou.Editor
             EditorGUILayout.EndHorizontal();
         }
         
+        /// <summary>
+        /// ノーツをソート
+        /// </summary>
+        private void SortNotes()
+        {
+            Undo.RecordObject(_chartData, "Sort Notes");
+            _chartData.SortNotesByTime();
+            EditorUtility.SetDirty(_chartData);
+        }
+        
+        /// <summary>
+        /// 譜面を検証
+        /// </summary>
+        private void ValidateChart()
+        {
+            bool isValid = _chartData.ValidateChart(out _validationErrors);
+            _showValidation = true;
+            
+            if (isValid)
+            {
+                EditorUtility.DisplayDialog("検証結果", "譜面データは正常です", "OK");
+            }
+        }
+        
+        /// <summary>
+        /// すべてのノーツをクリア
+        /// </summary>
+        private void ClearAllNotes()
+        {
+            if (EditorUtility.DisplayDialog("確認", 
+                "すべてのノーツを削除しますか？", "削除", "キャンセル"))
+            {
+                Undo.RecordObject(_chartData, "Clear All Notes");
+                _chartData.Notes.Clear();
+                EditorUtility.SetDirty(_chartData);
+            }
+        }
+        
         private void DrawStatistics()
         {
             EditorGUI.indentLevel++;
             
-            var stats = chartData.GetStatistics();
+            var stats = _chartData.GetStatistics();
             
+            DrawBasicStats(stats);
+            DrawLaneDistribution(stats);
+            DrawTimingStats(stats);
+            
+            EditorGUI.indentLevel--;
+        }
+        
+        /// <summary>
+        /// 基本統計を描画
+        /// </summary>
+        private void DrawBasicStats(ChartStatistics stats)
+        {
             EditorGUILayout.LabelField("総ノーツ数:", stats.totalNotes.ToString());
             EditorGUILayout.LabelField("Tapノーツ:", stats.tapNotes.ToString());
             EditorGUILayout.LabelField("Holdノーツ:", stats.holdNotes.ToString());
-            
+        }
+        
+        /// <summary>
+        /// レーン分布を描画
+        /// </summary>
+        private void DrawLaneDistribution(ChartStatistics stats)
+        {
             EditorGUILayout.LabelField("レーン分布:");
             EditorGUI.indentLevel++;
+            
             for (int i = 0; i < 4; i++)
             {
-                float percentage = stats.totalNotes > 0 ? 
-                    (float)stats.notesByLane[i] / stats.totalNotes * 100f : 0f;
-                    
+                float percentage = CalculateLanePercentage(stats.notesByLane[i], stats.totalNotes);
                 EditorGUILayout.LabelField(
                     $"レーン {i} ({NoteData.LaneKeys[i]}):", 
                     $"{stats.notesByLane[i]} ({percentage:F1}%)");
             }
-            EditorGUI.indentLevel--;
             
+            EditorGUI.indentLevel--;
+        }
+        
+        /// <summary>
+        /// レーンのパーセンテージを計算
+        /// </summary>
+        private float CalculateLanePercentage(int laneCount, int totalNotes)
+        {
+            return totalNotes > 0 ? (float)laneCount / totalNotes * 100f : 0f;
+        }
+        
+        /// <summary>
+        /// タイミング統計を描画
+        /// </summary>
+        private void DrawTimingStats(ChartStatistics stats)
+        {
             EditorGUILayout.LabelField("譜面長:", 
                 $"{stats.chartLengthSeconds:F1}秒 ({stats.chartLengthBeats:F1}ビート)");
             EditorGUILayout.LabelField("平均NPS:", $"{stats.averageNPS:F2}");
@@ -132,21 +213,19 @@ namespace Jirou.Editor
             {
                 EditorGUILayout.LabelField("平均間隔:", $"{stats.averageInterval:F3}ビート");
             }
-            
-            EditorGUI.indentLevel--;
         }
         
         private void DrawValidation()
         {
             EditorGUI.indentLevel++;
             
-            if (validationErrors.Count == 0)
+            if (_validationErrors.Count == 0)
             {
                 EditorGUILayout.HelpBox("エラーはありません", MessageType.Info);
             }
             else
             {
-                foreach (var error in validationErrors)
+                foreach (var error in _validationErrors)
                 {
                     EditorGUILayout.HelpBox(error, MessageType.Error);
                 }
@@ -157,32 +236,50 @@ namespace Jirou.Editor
         
         private void AddTestNotes()
         {
-            Undo.RecordObject(chartData, "Add Test Notes");
+            Undo.RecordObject(_chartData, "Add Test Notes");
+            
+            int notesAdded = 0;
             
             // 4ビートごとに各レーンにノーツを配置
             for (int beat = 0; beat < 16; beat += 4)
             {
                 for (int lane = 0; lane < 4; lane++)
                 {
-                    var note = new NoteData
-                    {
-                        noteType = (beat % 8 == 0 && lane % 2 == 0) ? 
-                            NoteType.Hold : NoteType.Tap,
-                        laneIndex = lane,
-                        timeToHit = beat + lane * 0.5f,
-                        holdDuration = 2.0f,
-                        visualScale = 1.0f,
-                        noteColor = Color.white
-                    };
-                    
-                    chartData.notes.Add(note);
+                    var note = CreateTestNote(beat, lane);
+                    _chartData.Notes.Add(note);
+                    notesAdded++;
                 }
             }
             
-            chartData.SortNotesByTime();
-            EditorUtility.SetDirty(chartData);
+            _chartData.SortNotesByTime();
+            EditorUtility.SetDirty(_chartData);
             
-            Debug.Log($"テストノーツを{16}個追加しました");
+            Debug.Log($"テストノーツを{notesAdded}個追加しました");
+        }
+        
+        /// <summary>
+        /// テストノーツを作成
+        /// </summary>
+        private NoteData CreateTestNote(int beat, int lane)
+        {
+            var note = new NoteData();
+            
+            note.NoteType = DetermineNoteType(beat, lane);
+            note.LaneIndex = lane;
+            note.TimeToHit = beat + lane * 0.5f;
+            note.HoldDuration = 2.0f;
+            note.VisualScale = 1.0f;
+            note.NoteColor = Color.white;
+            
+            return note;
+        }
+        
+        /// <summary>
+        /// ノーツタイプを決定
+        /// </summary>
+        private NoteType DetermineNoteType(int beat, int lane)
+        {
+            return (beat % 8 == 0 && lane % 2 == 0) ? NoteType.Hold : NoteType.Tap;
         }
     }
 }
