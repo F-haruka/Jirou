@@ -127,6 +127,13 @@ namespace Jirou.Visual
         [Tooltip("外枠を表示")]
         public bool showOuterBorders = true;
         
+        [Header("判定ライン設定")]
+        [Tooltip("判定ラインを表示")]
+        [SerializeField] private bool showJudgmentLine = true;
+        
+        [Tooltip("判定ラインプレハブ")]
+        [SerializeField] private GameObject judgmentLinePrefab;
+        
         [Header("Conductor連携")]
         [Tooltip("Conductorと自動同期する")]
         public bool syncWithConductor = true;
@@ -138,6 +145,7 @@ namespace Jirou.Visual
         // プライベートフィールド
         private LineRenderer[] laneRenderers;
         private GameObject laneContainer;
+        private GameObject judgmentLineInstance;
         private Conductor conductor;
         private float lastSyncTime;
 
@@ -184,6 +192,12 @@ namespace Jirou.Visual
             
             // マテリアルと色の適用
             ApplyVisualsToLanes();
+            
+            // 判定ラインの生成
+            if (showJudgmentLine)
+            {
+                CreateJudgmentLine();
+            }
         }
 
         /// <summary>
@@ -321,11 +335,12 @@ namespace Jirou.Visual
                     float nearX = x * conductor.PerspectiveNearScale;
                     float farX = x * conductor.PerspectiveFarScale;
                     
-                    Vector3 nearPoint = transform.position + new Vector3(nearX, 0, 0);
-                    Vector3 farPoint = transform.position + new Vector3(farX, 0, laneLength);
+                    // ワールド座標で直接レーンを配置（transform.positionに依存しない）
+                    Vector3 nearPoint = new Vector3(nearX, 0, 0);
+                    Vector3 farPoint = new Vector3(farX, 0, laneLength);
                     
                     string lineName = $"Divider_{i}";
-                    laneRenderers[lineIndex] = CreateSingleLine(lineName, nearPoint - transform.position, farPoint - transform.position);
+                    laneRenderers[lineIndex] = CreateSingleLine(lineName, nearPoint, farPoint);
                     lineIndex++;
                 }
             }
@@ -485,6 +500,34 @@ namespace Jirou.Visual
         }
 
         /// <summary>
+        /// 判定ラインを作成
+        /// </summary>
+        private void CreateJudgmentLine()
+        {
+            // 既存の判定ラインを削除
+            if (judgmentLineInstance != null)
+            {
+                DestroyImmediate(judgmentLineInstance);
+            }
+            
+            // プレハブから生成するか、新規作成
+            if (judgmentLinePrefab != null)
+            {
+                judgmentLineInstance = Instantiate(judgmentLinePrefab, transform);
+            }
+            else
+            {
+                // プレハブがない場合は動的に作成
+                judgmentLineInstance = new GameObject("JudgmentLine");
+                judgmentLineInstance.transform.SetParent(transform);
+                judgmentLineInstance.AddComponent<JudgmentLine>();
+            }
+            
+            // 位置をZ=0に固定
+            judgmentLineInstance.transform.localPosition = Vector3.zero;
+        }
+
+        /// <summary>
         /// レーンをクリア
         /// </summary>
         private void ClearLanes()
@@ -493,6 +536,12 @@ namespace Jirou.Visual
             {
                 DestroyImmediate(laneContainer);
                 laneContainer = null;
+            }
+            
+            if (judgmentLineInstance != null)
+            {
+                DestroyImmediate(judgmentLineInstance);
+                judgmentLineInstance = null;
             }
             
             laneRenderers = null;

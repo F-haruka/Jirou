@@ -3,6 +3,7 @@
     "rootNamespace": "Jirou.Visual",
     "references": [
         "Jirou.Core",
+        "Jirou.Gameplay",
         "Unity.RenderPipelines.Universal.Runtime"
     ],
     "includePlatforms": [],
