@@ -68,6 +68,20 @@ namespace Jirou.Gameplay
         
         void Start()
         {
+            // Conductorから設定を取得
+            if (conductor != null)
+            {
+                // レーン位置をConductorから取得
+                laneXPositions = conductor.LaneXPositions;
+                noteY = conductor.NoteY;
+                
+                LogDebug($"Conductorからレーン設定を取得: レーン数={laneXPositions.Length}");
+            }
+            else
+            {
+                Debug.LogWarning("[NoteSpawner] Conductorが見つかりません。デフォルト設定を使用します。");
+            }
+            
             // 初期化処理
             Initialize();
             
@@ -284,6 +298,10 @@ namespace Jirou.Gameplay
             Vector3 spawnPos = CalculateSpawnPosition(noteData);
             noteObject.transform.position = spawnPos;
             
+            // 初期スケールを遠近感に応じて設定
+            float initialScale = conductor.GetScaleAtZ(conductor.SpawnZ);
+            noteObject.transform.localScale = Vector3.one * initialScale;
+            
             // NoteControllerコンポーネントの設定
             NoteController controller = noteObject.GetComponent<NoteController>();
             if (controller != null)
@@ -305,7 +323,7 @@ namespace Jirou.Gameplay
             activeNotes.Add(noteObject);
             
             LogDebug($"ノーツ生成 - タイプ: {noteData.NoteType}, レーン: {noteData.LaneIndex}, " +
-                    $"タイミング: {noteData.TimeToHit:F2}ビート, 位置: {spawnPos}, Active: {noteObject.activeSelf}");
+                    $"タイミング: {noteData.TimeToHit:F2}ビート, 位置: {spawnPos}, スケール: {initialScale:F2}, Active: {noteObject.activeSelf}");
         }
         
         private Vector3 CalculateSpawnPosition(NoteData noteData)
@@ -313,10 +331,13 @@ namespace Jirou.Gameplay
             // レーンインデックスの検証
             int laneIndex = Mathf.Clamp(noteData.LaneIndex, 0, laneXPositions.Length - 1);
             
+            // X座標を遠近感を考慮して設定
+            float xPos = conductor.GetPerspectiveLaneX(laneIndex, conductor.SpawnZ);
+            
             return new Vector3(
-                laneXPositions[laneIndex],
+                xPos,
                 noteY,
-                conductor.spawnZ
+                conductor.SpawnZ
             );
         }
         
@@ -530,50 +551,55 @@ namespace Jirou.Gameplay
         {
             if (!showNotePathGizmo) return;
             
-            // レーンの可視化
-            if (laneXPositions != null && laneXPositions.Length == 4)
+            // Conductorの設定を優先的に使用
+            float[] displayLanePositions = laneXPositions;
+            float displaySpawnZ = 20f;
+            float displayHitZ = 0f;
+            float displayNoteY = noteY;
+            
+            if (conductor != null)
             {
-                float spawnZ = conductor != null ? conductor.spawnZ : 20f;
-                float hitZ = conductor != null ? conductor.hitZ : 0f;
-                
-                for (int i = 0; i < laneXPositions.Length; i++)
+                displayLanePositions = conductor.LaneXPositions;
+                displaySpawnZ = conductor.SpawnZ;
+                displayHitZ = conductor.HitZ;
+                displayNoteY = conductor.NoteY;
+            }
+            
+            // Conductorの統一された遠近感設定を使用
+            float nearScale = conductor != null ? conductor.PerspectiveNearScale : 1.0f;
+            float farScale = conductor != null ? conductor.PerspectiveFarScale : 0.25f;
+            
+            // レーンパスの可視化（遠近感付き）
+            if (displayLanePositions != null && displayLanePositions.Length > 0)
+            {
+                for (int i = 0; i < displayLanePositions.Length; i++)
                 {
-                    // レーンの中心線
+                    // レーンの中心線（Conductorの遠近感メソッドを使用）
                     Gizmos.color = new Color(0.5f, 0.5f, 1f, 0.5f);
-                    Gizmos.DrawLine(
-                        new Vector3(laneXPositions[i], noteY, spawnZ),
-                        new Vector3(laneXPositions[i], noteY, hitZ)
-                    );
                     
-                    // レーンの境界
-                    float laneWidth = 0.8f;
-                    Gizmos.color = new Color(0.3f, 0.3f, 0.8f, 0.3f);
+                    float nearX = conductor != null ? conductor.GetPerspectiveLaneX(i, displayHitZ) : displayLanePositions[i] * nearScale;
+                    float farX = conductor != null ? conductor.GetPerspectiveLaneX(i, displaySpawnZ) : displayLanePositions[i] * farScale;
                     
-                    // 左境界
-                    Gizmos.DrawLine(
-                        new Vector3(laneXPositions[i] - laneWidth/2, noteY, spawnZ),
-                        new Vector3(laneXPositions[i] - laneWidth/2, noteY, hitZ)
-                    );
+                    Vector3 nearPos = new Vector3(nearX, displayNoteY, displayHitZ);
+                    Vector3 farPos = new Vector3(farX, displayNoteY, displaySpawnZ);
                     
-                    // 右境界
-                    Gizmos.DrawLine(
-                        new Vector3(laneXPositions[i] + laneWidth/2, noteY, spawnZ),
-                        new Vector3(laneXPositions[i] + laneWidth/2, noteY, hitZ)
-                    );
+                    Gizmos.DrawLine(nearPos, farPos);
                 }
                 
-                // スポーンライン
+                // スポーンライン（遠近感考慮）
                 Gizmos.color = Color.green;
+                float spawnLineExtent = (displayLanePositions[displayLanePositions.Length - 1] - displayLanePositions[0]) / 2f + 1f;
                 Gizmos.DrawLine(
-                    new Vector3(laneXPositions[0] - 1f, noteY, spawnZ),
-                    new Vector3(laneXPositions[3] + 1f, noteY, spawnZ)
+                    new Vector3(-spawnLineExtent * farScale, displayNoteY, displaySpawnZ),
+                    new Vector3(spawnLineExtent * farScale, displayNoteY, displaySpawnZ)
                 );
                 
-                // 判定ライン
+                // 判定ライン（遠近感考慮）
                 Gizmos.color = Color.red;
+                float hitLineExtent = spawnLineExtent;
                 Gizmos.DrawLine(
-                    new Vector3(laneXPositions[0] - 1f, noteY, hitZ),
-                    new Vector3(laneXPositions[3] + 1f, noteY, hitZ)
+                    new Vector3(-hitLineExtent * nearScale, displayNoteY, displayHitZ),
+                    new Vector3(hitLineExtent * nearScale, displayNoteY, displayHitZ)
                 );
             }
             

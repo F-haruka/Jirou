@@ -39,6 +39,7 @@ namespace Jirou.Gameplay
             noteData = data;
             conductor = conductorRef;
             targetBeat = data.TimeToHit;
+            laneIndex = data.LaneIndex;  // レーンインデックスを設定
             
             // 初期状態の記録
             initialZ = transform.position.z;
@@ -92,8 +93,12 @@ namespace Jirou.Gameplay
             
             // 1. Z座標の更新（奥から手前へ移動）
             float newZ = conductor.GetNoteZPosition(targetBeat);
+            
+            // 2. 遠近感を考慮したX座標の更新
+            float perspectiveX = conductor.GetPerspectiveLaneX(laneIndex, newZ);
+            
             transform.position = new Vector3(
-                transform.position.x,
+                perspectiveX,
                 transform.position.y,
                 newZ
             );
@@ -101,13 +106,13 @@ namespace Jirou.Gameplay
             // 最初のフレームだけデバッグログを出力
             if (Time.frameCount % 60 == 0) // 60フレームごとにログ出力
             {
-                Debug.Log($"[NoteController] Moving - TargetBeat: {targetBeat:F2}, CurrentZ: {newZ:F2}, Active: {gameObject.activeSelf}");
+                Debug.Log($"[NoteController] Moving - TargetBeat: {targetBeat:F2}, CurrentZ: {newZ:F2}, PerspectiveX: {perspectiveX:F2}, Active: {gameObject.activeSelf}");
             }
             
-            // 2. 距離に応じたスケール変更
-            ApplyDistanceScaling(newZ);
+            // 3. 距離に応じたスケール変更（遠近感対応）
+            UpdateScale(newZ);
             
-            // 3. 判定ラインを通過したかチェック
+            // 4. 判定ラインを通過したかチェック
             if (newZ < conductor.hitZ - 2.0f)
             {
                 // ミス処理
@@ -222,25 +227,23 @@ namespace Jirou.Gameplay
         }
         
         /// <summary>
-        /// 距離に応じたスケール変更を適用
+        /// Z座標に基づいたスケール更新（遠近感対応）
         /// </summary>
-        private void ApplyDistanceScaling(float currentZ)
+        private void UpdateScale(float zPosition)
         {
-            // 距離の比率を計算（0=手前、1=奥）
-            float distanceRatio = Mathf.Clamp01(currentZ / conductor.spawnZ);
+            if (conductor == null) return;
             
-            // スケール係数を計算（手前1.5倍、奥0.5倍）
-            float scaleFactor = Mathf.Lerp(1.5f, 0.5f, distanceRatio);
+            // Conductorの統一されたスケール値を取得
+            float scale = conductor.GetScaleAtZ(zPosition);
             
             // NoteDataのVisualScaleも考慮
-            float finalScale = scaleFactor;
             if (noteData != null)
             {
-                finalScale *= noteData.VisualScale;
+                scale *= noteData.VisualScale;
             }
             
             // スケールを適用
-            transform.localScale = initialScale * finalScale;
+            transform.localScale = initialScale * scale;
         }
         
         /// <summary>
