@@ -1,0 +1,57 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9dac2d2e6ac2b7f4292a4b910b15feaa, type: 3}
+  m_Name: TestChart
+  m_EditorClassIdentifier: 
+  _songClip: {fileID: 8300000, guid: 5c408122a2ae0aa4e9dab103b7b7adc4, type: 3}
+  _bpm: 120
+  _songName: "\u7121\u984C"
+  _artist: "\u4E0D\u660E"
+  _previewTime: 0
+  _firstBeatOffset: 0
+  _difficulty: 1
+  _difficultyName: Normal
+  _notes:
+  - _noteType: 0
+    _laneIndex: 0
+    _timeToHit: 0
+    _holdDuration: 0
+    _visualScale: 0
+    _noteColor: {r: 0, g: 0, b: 0, a: 0}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 0
+    _scoreMultiplier: 0
+  - _noteType: 0
+    _laneIndex: 0
+    _timeToHit: 0
+    _holdDuration: 0
+    _visualScale: 0
+    _noteColor: {r: 0, g: 0, b: 0, a: 0}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 0
+    _scoreMultiplier: 0
+  - _noteType: 0
+    _laneIndex: 0
+    _timeToHit: 0
+    _holdDuration: 0
+    _visualScale: 0
+    _noteColor: {r: 0, g: 0, b: 0, a: 0}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 0
+    _scoreMultiplier: 0
+  _chartAuthor: 
+  _chartVersion: 1.0
+  _createdDate: 
+  _lastModified: 
