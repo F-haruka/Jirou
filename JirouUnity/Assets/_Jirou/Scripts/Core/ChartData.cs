@@ -205,11 +205,13 @@ namespace Jirou.Core
                 isValid = false;
             }
             
-            // 楽曲ファイルチェック
+            // 楽曲ファイルチェック（オプショナル）
+            // テスト環境ではConductorに直接AudioClipを設定することもあるため、
+            // SongClipがnullでもエラーにしない
             if (_songClip == null)
             {
-                errors.Add("楽曲ファイルが設定されていません");
-                isValid = false;
+                // 警告として記録するが、エラーにはしない
+                Debug.LogWarning("[ChartData] 楽曲ファイルが設定されていません。Conductorの既存AudioClipを使用します。");
             }
             
             // 曲名チェック
