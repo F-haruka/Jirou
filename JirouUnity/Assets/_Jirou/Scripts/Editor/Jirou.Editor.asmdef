@@ -3,7 +3,8 @@
     "rootNamespace": "Jirou.Editor",
     "references": [
         "Jirou.Core",
-        "Jirou.Gameplay"
+        "Jirou.Gameplay",
+        "Jirou.Visual"
     ],
     "includePlatforms": [
         "Editor"
