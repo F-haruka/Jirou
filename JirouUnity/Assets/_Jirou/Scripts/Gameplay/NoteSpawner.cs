@@ -35,6 +35,10 @@ namespace Jirou.Gameplay
         [Range(1f, 5f)]
         public float beatsShownInAdvance = 3.0f;
         
+        [Header("再生設定")]
+        [Tooltip("自動的に楽曲を開始")]
+        public bool autoStart = false;
+        
         [Header("デバッグ設定")]
         [Tooltip("デバッグログを有効化")]
         public bool enableDebugLog = false;
@@ -67,8 +71,11 @@ namespace Jirou.Gameplay
             // 初期化処理
             Initialize();
             
-            // 楽曲を開始
-            StartSpawning();
+            // 自動開始が有効な場合のみ楽曲を開始
+            if (autoStart)
+            {
+                StartSpawning();
+            }
         }
         
         void Update()
@@ -161,19 +168,41 @@ namespace Jirou.Gameplay
         
         // ========== ノーツ生成メソッド ==========
         
-        private void StartSpawning()
+        public void StartSpawning()
         {
             if (conductor == null || chartData == null) return;
             
-            // Conductorに楽曲データを設定
-            conductor.songSource.clip = chartData.SongClip;
-            conductor.songBpm = chartData.Bpm;
+            // AudioSourceの存在確認
+            if (conductor.songSource == null)
+            {
+                Debug.LogError("[NoteSpawner] ConductorのAudioSourceが設定されていません！");
+                return;
+            }
+            
+            // ChartDataにSongClipがある場合のみ設定（なければ既存のAudioClipを使用）
+            if (chartData.SongClip != null)
+            {
+                conductor.songSource.clip = chartData.SongClip;
+                conductor.songBpm = chartData.Bpm;
+            }
+            else
+            {
+                // ChartDataにSongClipがない場合、既存のAudioClipとBPMを使用
+                Debug.Log($"[NoteSpawner] ChartDataにSongClipがないため、既存のAudioClip '{conductor.songSource.clip?.name}' を使用します");
+            }
+            
+            // AudioClipが設定されているか最終確認
+            if (conductor.songSource.clip == null)
+            {
+                Debug.LogError("[NoteSpawner] AudioClipが設定されていません！ConductorのAudioSourceにAudioClipを設定してください。");
+                return;
+            }
             
             // 楽曲を開始
             conductor.StartSong();
             
             isSpawning = true;
-            LogDebug("ノーツ生成開始");
+            LogDebug($"ノーツ生成開始 - AudioClip: {conductor.songSource.clip.name}, BPM: {conductor.songBpm}");
         }
         
         private void UpdateNoteSpawning()
