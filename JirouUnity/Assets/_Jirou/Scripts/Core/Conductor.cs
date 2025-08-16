@@ -315,6 +315,13 @@ namespace Jirou.Core
         private void InitializeComponents()
         {
             _cachedAudioSource = _songSource != null ? _songSource : GetComponent<AudioSource>();
+            
+            // AudioSourceが見つからない場合は自動的に追加
+            if (_cachedAudioSource == null)
+            {
+                _cachedAudioSource = gameObject.AddComponent<AudioSource>();
+                Debug.LogWarning("[Conductor] AudioSourceが見つからなかったため、自動的に追加しました。");
+            }
         }
         
         /// <summary>
