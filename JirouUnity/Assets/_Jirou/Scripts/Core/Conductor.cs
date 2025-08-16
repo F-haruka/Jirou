@@ -523,41 +523,8 @@ namespace Jirou.Core
 
         void OnDrawGizmos()
         {
-            // スポーンラインの可視化
-            Gizmos.color = Color.green;
-            Gizmos.DrawWireCube(new Vector3(0, 0.5f, _spawnZ), 
-                                new Vector3(10, 0.1f, 0.1f));
-            
-            // スポーンライン位置のラベル
-            UnityEditor.Handles.color = Color.green;
-            UnityEditor.Handles.Label(new Vector3(5, 1, _spawnZ), "Spawn Line");
-            
-            // 判定ラインの可視化
-            Gizmos.color = Color.red;
-            Gizmos.DrawWireCube(new Vector3(0, 0.5f, _hitZ), 
-                                new Vector3(10, 0.1f, 0.1f));
-            
-            // 判定ライン位置のラベル
-            UnityEditor.Handles.color = Color.red;
-            UnityEditor.Handles.Label(new Vector3(5, 1, _hitZ), "Hit Line");
-            
-            // 移動経路の可視化（4レーン）
-            float[] laneX = { -3f, -1f, 1f, 3f };
-            Gizmos.color = Color.yellow;
-            
-            foreach (float x in laneX)
-            {
-                Gizmos.DrawLine(new Vector3(x, 0.5f, _spawnZ), 
-                                new Vector3(x, 0.5f, _hitZ));
-            }
-            
-            // Z軸方向の矢印
-            Gizmos.color = Color.cyan;
-            Gizmos.DrawLine(new Vector3(0, 2, _spawnZ), 
-                            new Vector3(0, 2, _hitZ));
-            // 矢印の先端を表現するためのワイヤーキューブ
-            Gizmos.DrawWireCube(new Vector3(0, 2, _hitZ), 
-                                new Vector3(0.5f, 0.5f, 0.5f));
+            // Gizmo表示を完全に無効化
+            return;
         }
 #endif
     }

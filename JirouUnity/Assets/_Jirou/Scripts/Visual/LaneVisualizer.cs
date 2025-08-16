@@ -615,11 +615,8 @@ namespace Jirou.Visual
         /// </summary>
         void OnDrawGizmos()
         {
-            // エディタ上でプレビュー表示
-            if (!Application.isPlaying)
-            {
-                DrawPreviewGizmos();
-            }
+            // Gizmo表示を完全に無効化
+            return;
         }
 
         /// <summary>

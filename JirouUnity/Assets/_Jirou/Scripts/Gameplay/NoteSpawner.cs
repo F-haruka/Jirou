@@ -573,72 +573,8 @@ namespace Jirou.Gameplay
         
         void OnDrawGizmos()
         {
-            if (!showNotePathGizmo) return;
-            
-            // Conductorの設定を優先的に使用
-            float[] displayLanePositions = laneXPositions;
-            float displaySpawnZ = 20f;
-            float displayHitZ = 0f;
-            float displayNoteY = noteY;
-            
-            if (conductor != null)
-            {
-                displayLanePositions = conductor.LaneXPositions;
-                displaySpawnZ = conductor.SpawnZ;
-                displayHitZ = conductor.HitZ;
-                displayNoteY = conductor.NoteY;
-            }
-            
-            // Conductorの統一された遠近感設定を使用
-            float nearScale = conductor != null ? conductor.PerspectiveNearScale : 1.0f;
-            float farScale = conductor != null ? conductor.PerspectiveFarScale : 0.25f;
-            
-            // レーンパスの可視化（遠近感付き）
-            if (displayLanePositions != null && displayLanePositions.Length > 0)
-            {
-                for (int i = 0; i < displayLanePositions.Length; i++)
-                {
-                    // レーンの中心線（Conductorの遠近感メソッドを使用）
-                    Gizmos.color = new Color(0.5f, 0.5f, 1f, 0.5f);
-                    
-                    float nearX = conductor != null ? conductor.GetPerspectiveLaneX(i, displayHitZ) : displayLanePositions[i] * nearScale;
-                    float farX = conductor != null ? conductor.GetPerspectiveLaneX(i, displaySpawnZ) : displayLanePositions[i] * farScale;
-                    
-                    Vector3 nearPos = new Vector3(nearX, displayNoteY, displayHitZ);
-                    Vector3 farPos = new Vector3(farX, displayNoteY, displaySpawnZ);
-                    
-                    Gizmos.DrawLine(nearPos, farPos);
-                }
-                
-                // スポーンライン（遠近感考慮）
-                Gizmos.color = Color.green;
-                float spawnLineExtent = (displayLanePositions[displayLanePositions.Length - 1] - displayLanePositions[0]) / 2f + 1f;
-                Gizmos.DrawLine(
-                    new Vector3(-spawnLineExtent * farScale, displayNoteY, displaySpawnZ),
-                    new Vector3(spawnLineExtent * farScale, displayNoteY, displaySpawnZ)
-                );
-                
-                // 判定ライン（遠近感考慮）
-                Gizmos.color = Color.red;
-                float hitLineExtent = spawnLineExtent;
-                Gizmos.DrawLine(
-                    new Vector3(-hitLineExtent * nearScale, displayNoteY, displayHitZ),
-                    new Vector3(hitLineExtent * nearScale, displayNoteY, displayHitZ)
-                );
-            }
-            
-            // アクティブノーツの可視化
-            if (Application.isPlaying && activeNotes != null)
-            {
-                foreach (GameObject note in activeNotes)
-                {
-                    if (note != null)
-                    {
-                        Gizmos.color = new Color(1f, 1f, 0f, 0.5f);
-                        Gizmos.DrawWireCube(note.transform.position, Vector3.one * 0.5f);
-                    }
-                }
-            }
+            // Gizmo表示を完全に無効化
+            return;
         }
 #endif
     }
