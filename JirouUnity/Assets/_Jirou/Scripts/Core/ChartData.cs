@@ -173,6 +173,12 @@ namespace Jirou.Core
             errors = new List<string>();
             bool isValid = true;
             
+            // 空の譜面は有効とする
+            if (_notes.Count == 0)
+            {
+                return true;
+            }
+            
             // 基本データのバリデーション
             isValid &= ValidateBasicData(errors);
             
