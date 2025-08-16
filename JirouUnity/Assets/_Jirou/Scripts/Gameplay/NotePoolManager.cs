@@ -133,6 +133,13 @@ namespace Jirou.Gameplay
         
         private void CreateInitialPool()
         {
+            // プレハブが設定されていない場合はプールを作成しない
+            if (tapNotePrefab == null || holdNotePrefab == null)
+            {
+                LogDebug("プレハブが設定されていないため、初期プールを作成しません");
+                return;
+            }
+            
             // Tapノーツの初期プール作成
             for (int i = 0; i < initialPoolSize; i++)
             {

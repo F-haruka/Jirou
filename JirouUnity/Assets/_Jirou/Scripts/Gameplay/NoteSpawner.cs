@@ -170,7 +170,11 @@ namespace Jirou.Gameplay
         
         public void StartSpawning()
         {
-            if (conductor == null || chartData == null) return;
+            if (conductor == null || chartData == null) 
+            {
+                Debug.LogError($"[NoteSpawner] StartSpawning失敗 - conductor is null: {conductor == null}, chartData is null: {chartData == null}");
+                return;
+            }
             
             // AudioSourceの存在確認
             if (conductor.songSource == null)
@@ -203,6 +207,7 @@ namespace Jirou.Gameplay
             
             isSpawning = true;
             LogDebug($"ノーツ生成開始 - AudioClip: {conductor.songSource.clip.name}, BPM: {conductor.songBpm}");
+            LogDebug($"ChartData - Notes Count: {chartData.Notes.Count}, First Note Time: {(chartData.Notes.Count > 0 ? chartData.Notes[0].TimeToHit.ToString() : "N/A")}");
         }
         
         private void UpdateNoteSpawning()
@@ -217,6 +222,9 @@ namespace Jirou.Gameplay
                 }
                 return;
             }
+            
+            // デバッグログ：現在の状態を出力
+            LogDebug($"UpdateNoteSpawning - nextNoteIndex: {nextNoteIndex}, currentBeat: {conductor.songPositionInBeats:F2}");
             
             // パフォーマンス最適化: 一定間隔でのみチェック
             float currentBeat = conductor.songPositionInBeats;
@@ -268,6 +276,8 @@ namespace Jirou.Gameplay
             if (noteObject == null)
             {
                 noteObject = Instantiate(notePrefab);
+                // 生成されたノーツを確実にアクティブ化
+                noteObject.SetActive(true);
             }
             
             // 位置の設定
@@ -288,11 +298,14 @@ namespace Jirou.Gameplay
             // カスタマイズの適用
             ApplyNoteCustomization(noteObject, noteData);
             
+            // ノーツを確実にアクティブ化
+            noteObject.SetActive(true);
+            
             // アクティブリストに追加
             activeNotes.Add(noteObject);
             
             LogDebug($"ノーツ生成 - タイプ: {noteData.NoteType}, レーン: {noteData.LaneIndex}, " +
-                    $"タイミング: {noteData.TimeToHit:F2}ビート, 位置: {spawnPos}");
+                    $"タイミング: {noteData.TimeToHit:F2}ビート, 位置: {spawnPos}, Active: {noteObject.activeSelf}");
         }
         
         private Vector3 CalculateSpawnPosition(NoteData noteData)

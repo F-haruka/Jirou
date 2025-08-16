@@ -54,6 +54,8 @@ namespace Jirou.Gameplay
             {
                 SetupHoldTrail(data.HoldDuration);
             }
+            
+            Debug.Log($"[NoteController] Initialized - Lane: {data.LaneIndex}, Beat: {targetBeat:F2}, InitialZ: {initialZ:F2}");
         }
         
         void Start()
@@ -62,6 +64,7 @@ namespace Jirou.Gameplay
             if (conductor == null)
             {
                 conductor = Conductor.Instance;
+                Debug.Log($"[NoteController] Start - Got Conductor Instance, active: {gameObject.activeSelf}");
             }
             
             // NoteDataからtargetBeatを設定
@@ -94,6 +97,12 @@ namespace Jirou.Gameplay
                 transform.position.y,
                 newZ
             );
+            
+            // 最初のフレームだけデバッグログを出力
+            if (Time.frameCount % 60 == 0) // 60フレームごとにログ出力
+            {
+                Debug.Log($"[NoteController] Moving - TargetBeat: {targetBeat:F2}, CurrentZ: {newZ:F2}, Active: {gameObject.activeSelf}");
+            }
             
             // 2. 距離に応じたスケール変更
             ApplyDistanceScaling(newZ);
