@@ -11,9 +11,9 @@ namespace Jirou.Gameplay
     public class JudgmentZone : MonoBehaviour
     {
         [Header("Judgment Ranges")]
-        [SerializeField] private float perfectRange = 0.5f;  // Perfect判定のZ範囲
-        [SerializeField] private float greatRange = 1.0f;    // Great判定のZ範囲  
-        [SerializeField] private float goodRange = 1.5f;     // Good判定のZ範囲
+        [SerializeField] private float perfectRange = 1.0f;  // Perfect判定のZ範囲（広めに設定）
+        [SerializeField] private float greatRange = 2.0f;    // Great判定のZ範囲  
+        [SerializeField] private float goodRange = 3.0f;     // Good判定のZ範囲
         
         [Header("Lane Settings")]
         [SerializeField] private int laneIndex;  // このゾーンが担当するレーンのインデックス（0-3）
@@ -35,6 +35,12 @@ namespace Jirou.Gameplay
             // リストをクリーンアップ（null参照を削除）
             notesInZone.RemoveAll(note => note == null);
             
+            // デバッグ用：ゾーン内のノーツ数を出力
+            if (notesInZone.Count > 0)
+            {
+                Debug.Log($"[JudgmentZone] GetClosestNote - Lane: {laneIndex}, Notes in zone: {notesInZone.Count}");
+            }
+            
             foreach (var note in notesInZone)
             {
                 // 既に判定済みまたは非アクティブなノーツはスキップ
@@ -49,6 +55,11 @@ namespace Jirou.Gameplay
                 }
             }
             
+            if (closest != null)
+            {
+                Debug.Log($"[JudgmentZone] Found closest note - Lane: {laneIndex}, Z: {closest.transform.position.z:F2}, Distance: {minDistance:F2}");
+            }
+            
             return closest;
         }
         
@@ -60,6 +71,9 @@ namespace Jirou.Gameplay
             if (note == null) return JudgmentType.Miss;
             
             float distance = Mathf.Abs(note.transform.position.z);
+            
+            // デバッグログで実際の距離を出力
+            Debug.Log($"[JudgmentZone] JudgeHit - Lane: {laneIndex}, NoteZ: {note.transform.position.z:F2}, Distance: {distance:F2}, Perfect: {perfectRange}, Great: {greatRange}, Good: {goodRange}");
             
             if (distance <= perfectRange)
             {
@@ -147,8 +161,20 @@ namespace Jirou.Gameplay
             
             // Colliderの設定
             collider.isTrigger = true;
-            collider.size = new Vector3(1f, 2f, 4f);  // 幅1、高さ2、奥行き4
+            // 奥行きを大きくして、ノーツを確実に検出できるようにする
+            // 判定範囲（goodRange = 1.5f）の約3倍のサイズを確保
+            collider.size = new Vector3(1.5f, 2f, 10f);  // 幅1.5、高さ2、奥行き10
             collider.center = Vector3.zero;
+            
+            // Rigidbodyの確認と設定（トリガー検出に必要）
+            var rb = GetComponent<Rigidbody>();
+            if (rb == null)
+            {
+                rb = gameObject.AddComponent<Rigidbody>();
+                rb.isKinematic = true;  // 物理演算は不要
+                rb.useGravity = false;
+                Debug.Log($"[JudgmentZone] Added Rigidbody - Lane: {laneIndex}");
+            }
             
             Debug.Log($"[JudgmentZone] Initialized - Lane: {laneIndex}, Position: {transform.position}");
         }
