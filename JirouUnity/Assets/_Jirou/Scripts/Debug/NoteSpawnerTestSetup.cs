@@ -33,18 +33,13 @@ namespace Jirou.Testing
         public NoteSpawner noteSpawner;
         public NotePoolManager notePoolManager;
         
-        void Awake()
+        void Start()
         {
-            // AwakeでセットアップすることでNoteSpawnerのStart()より先に実行される
+            // StartでセットアップしてConductorが確実に初期化されるようにする
             if (autoSetup)
             {
                 SetupTestEnvironment();
             }
-        }
-        
-        void Start()
-        {
-            // Start()では何もしない（既にAwakeで処理済み）
         }
         
         /// <summary>
@@ -71,14 +66,14 @@ namespace Jirou.Testing
             // 4. NoteSpawnerのセットアップ
             SetupNoteSpawner();
             
-            // 4. テスト用譜面データの生成
+            // 5. プレハブの作成（譜面データ生成前にプレハブが必要）
+            CreateTestPrefabs();
+            
+            // 6. テスト用譜面データの生成（NoteSpawnerセットアップ後に実行）
             if (generateTestChart)
             {
                 GenerateTestChart();
             }
-            
-            // 5. プレハブの作成
-            CreateTestPrefabs();
             
             Debug.Log("[NoteSpawnerTestSetup] テスト環境のセットアップ完了");
             Debug.Log($"[NoteSpawnerTestSetup] tapNotePrefab is null: {noteSpawner.tapNotePrefab == null}");
@@ -224,6 +219,7 @@ namespace Jirou.Testing
             noteSpawner.beatsShownInAdvance = 3.0f;
             noteSpawner.enableDebugLog = true;
             noteSpawner.showNotePathGizmo = true;
+            noteSpawner.autoStart = false;  // TestSetupが制御するため自動開始は無効
             
             Debug.Log("[NoteSpawnerTestSetup] NoteSpawnerをセットアップしました");
         }

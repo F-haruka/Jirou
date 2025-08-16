@@ -53,6 +53,7 @@ namespace Jirou.Gameplay
         private Conductor conductor;
         private NotePoolManager notePool;
         private bool isSpawning = false;
+        private bool isInitialized = false;  // 初期化済みフラグ
         
         // パフォーマンス最適化用
         private float lastSpawnCheckBeat = -1f;
@@ -62,12 +63,14 @@ namespace Jirou.Gameplay
         
         void Awake()
         {
-            // 依存コンポーネントの取得
-            InitializeDependencies();
+            // Awakeでは何もしない（依存関係の取得はStartで行う）
         }
         
         void Start()
         {
+            // 依存コンポーネントの取得
+            InitializeDependencies();
+            
             // Conductorから設定を取得
             if (conductor != null)
             {
@@ -82,13 +85,22 @@ namespace Jirou.Gameplay
                 Debug.LogWarning("[NoteSpawner] Conductorが見つかりません。デフォルト設定を使用します。");
             }
             
-            // 初期化処理
-            Initialize();
-            
-            // 自動開始が有効な場合のみ楽曲を開始
-            if (autoStart)
+            // ChartDataが設定されている場合のみ初期化処理を実行
+            // TestSetupから後で設定される場合があるため、ここではスキップ可能
+            if (chartData != null)
             {
-                StartSpawning();
+                // 初期化処理
+                Initialize();
+                
+                // 自動開始が有効な場合のみ楽曲を開始
+                if (autoStart)
+                {
+                    StartSpawning();
+                }
+            }
+            else
+            {
+                LogDebug("[NoteSpawner] ChartDataが未設定のため、初期化をスキップします");
             }
         }
         
@@ -132,6 +144,9 @@ namespace Jirou.Gameplay
         
         private void Initialize()
         {
+            // 既に初期化済みの場合はスキップ
+            if (isInitialized) return;
+            
             // データ検証
             if (!ValidateData())
             {
@@ -141,6 +156,9 @@ namespace Jirou.Gameplay
             
             // 譜面データのソート
             chartData.SortNotesByTime();
+            
+            // 初期化完了フラグを設定
+            isInitialized = true;
             
             // 初期化完了ログ
             LogDebug($"NoteSpawner初期化完了 - 総ノーツ数: {chartData.Notes.Count}");
@@ -184,6 +202,12 @@ namespace Jirou.Gameplay
         
         public void StartSpawning()
         {
+            // ChartDataが設定されていて、まだ初期化されていない場合は初期化を実行
+            if (chartData != null && !isInitialized)
+            {
+                Initialize();
+            }
+            
             if (conductor == null || chartData == null) 
             {
                 Debug.LogError($"[NoteSpawner] StartSpawning失敗 - conductor is null: {conductor == null}, chartData is null: {chartData == null}");
