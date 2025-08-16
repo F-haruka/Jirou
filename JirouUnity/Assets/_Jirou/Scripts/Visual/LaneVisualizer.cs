@@ -321,11 +321,12 @@ namespace Jirou.Visual
                     float nearX = x * conductor.PerspectiveNearScale;
                     float farX = x * conductor.PerspectiveFarScale;
                     
-                    Vector3 nearPoint = transform.position + new Vector3(nearX, 0, 0);
-                    Vector3 farPoint = transform.position + new Vector3(farX, 0, laneLength);
+                    // ワールド座標で直接レーンを配置（transform.positionに依存しない）
+                    Vector3 nearPoint = new Vector3(nearX, 0, 0);
+                    Vector3 farPoint = new Vector3(farX, 0, laneLength);
                     
                     string lineName = $"Divider_{i}";
-                    laneRenderers[lineIndex] = CreateSingleLine(lineName, nearPoint - transform.position, farPoint - transform.position);
+                    laneRenderers[lineIndex] = CreateSingleLine(lineName, nearPoint, farPoint);
                     lineIndex++;
                 }
             }
