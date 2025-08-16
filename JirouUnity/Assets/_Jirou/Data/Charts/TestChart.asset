@@ -181,6 +181,16 @@ MonoBehaviour:
     _customHitEffect: {fileID: 0}
     _baseScore: 100
     _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 0
+    _timeToHit: 0
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
   _chartAuthor: 
   _chartVersion: 1.0
   _createdDate: 
