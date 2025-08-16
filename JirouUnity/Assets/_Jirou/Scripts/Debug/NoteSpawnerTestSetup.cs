@@ -218,7 +218,7 @@ namespace Jirou.Testing
             // その他の設定
             noteSpawner.beatsShownInAdvance = 3.0f;
             noteSpawner.enableDebugLog = true;
-            noteSpawner.showNotePathGizmo = true;
+            noteSpawner.showNotePathGizmo = false;  // Gizmo表示を無効化
             noteSpawner.autoStart = false;  // TestSetupが制御するため自動開始は無効
             
             Debug.Log("[NoteSpawnerTestSetup] NoteSpawnerをセットアップしました");
@@ -256,7 +256,8 @@ namespace Jirou.Testing
                 noteType.GetField("_laneIndex", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).SetValue(note, UnityEngine.Random.Range(0, 4));
                 noteType.GetField("_timeToHit", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).SetValue(note, (i + 1) * noteInterval);
                 noteType.GetField("_visualScale", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).SetValue(note, 1.0f);
-                noteType.GetField("_noteColor", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).SetValue(note, GetRandomColor());
+                // 色の設定を削除（マテリアルの色を使用）
+                // noteType.GetField("_noteColor", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).SetValue(note, GetRandomColor());
                 noteType.GetField("_scoreMultiplier", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance).SetValue(note, 1.0f);
                 
                 // Holdノーツの場合は長さを設定
@@ -347,24 +348,7 @@ namespace Jirou.Testing
             return prefab;
         }
         
-        /// <summary>
-        /// ランダムな色を取得
-        /// </summary>
-        private Color GetRandomColor()
-        {
-            Color[] colors = new Color[]
-            {
-                Color.red,
-                Color.green,
-                Color.blue,
-                Color.yellow,
-                Color.magenta,
-                Color.cyan,
-                Color.white
-            };
-            
-            return colors[UnityEngine.Random.Range(0, colors.Length)];
-        }
+        // GetRandomColor関数は削除（マテリアルの色を使用するため不要）
         
         /// <summary>
         /// テストを開始
