@@ -281,11 +281,11 @@ Inspectorで以下を設定：
 
 ### 9.1 再生前のチェックリスト
 
-- [ ] Conductor に AudioClip（End_Time.wav）が設定されている
-- [ ] NotePoolManager に両プレハブが設定されている
-- [ ] NoteSpawner に両プレハブが設定されている
-- [ ] LaneVisualizer のレーンが表示されている（Gizmoで確認）
-- [ ] TestSetup の Auto Setup がオンになっている
+- [x] Conductor に AudioClip（End_Time.wav）が設定されている
+- [x] NotePoolManager に両プレハブが設定されている
+- [x] NoteSpawner に両プレハブが設定されている
+- [x] LaneVisualizer のレーンが表示されている（Gizmoで確認）
+- [x] TestSetup の Auto Setup がオンになっている
 
 ### 9.2 テスト実行
 

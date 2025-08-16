@@ -223,16 +223,16 @@
 以下を確認してください：
 
 **必須コンポーネント：**
-- [ ] Conductorが存在し、AudioClipが設定されている
-- [ ] NoteSpawnerが存在し、ChartDataまたはテスト譜面が設定されている
-- [ ] NotePoolManagerが存在し、プレハブが設定されている
-- [ ] InputManagerが存在する
-- [ ] 4つのJudgmentZoneが作成され、正しい位置にある
-- [ ] InputManagerのJudgment Zones配列に4つの判定ゾーンが設定されている
+- [x] Conductorが存在し、AudioClipが設定されている
+- [x] NoteSpawnerが存在し、ChartDataまたはテスト譜面が設定されている
+- [x] NotePoolManagerが存在し、プレハブが設定されている
+- [x] InputManagerが存在する
+- [x] 4つのJudgmentZoneが作成され、正しい位置にある
+- [x] InputManagerのJudgment Zones配列に4つの判定ゾーンが設定されている
 
 **オプション：**
-- [ ] LaneVisualizerでレーンが表示されている
-- [ ] ヒットエフェクトプレハブが作成・設定されている
+- [x] LaneVisualizerでレーンが表示されている
+- [x] ヒットエフェクトプレハブが作成・設定されている
 
 #### 5.2 Playモードでのテスト
 
