@@ -219,6 +219,10 @@ Assets/Tests/
    - 緑のチェック: テスト成功
    - 赤のX: テスト失敗（詳細はConsoleウィンドウで確認）
 
+**注意：Claude Codeはコマンドラインからのテスト実行を行いません**
+- Unityテストの実行は必ずUnityエディタのTest Runnerウィンドウから行ってください
+- コマンドラインからのバッチモード実行（`Unity.exe -batchmode -runEditorTests`など）は使用しません
+- テストの実行と結果確認はユーザーがUnityエディタ上で行い、必要に応じてClaude Codeに結果を共有してください
 
 ### Unityテストのベストプラクティス
 
