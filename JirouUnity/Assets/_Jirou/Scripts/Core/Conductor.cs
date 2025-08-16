@@ -52,6 +52,23 @@ namespace Jirou.Core
         [Tooltip("判定ラインのZ座標")]
         [SerializeField] private float _hitZ = 0.0f;
 
+        [Header("レーン設定")]
+        [Tooltip("レーンのX座標配列")]
+        [SerializeField] private float[] _laneXPositions = { -3f, -1f, 1f, 3f };
+        
+        [Tooltip("レーン間の視覚的な幅")]
+        [SerializeField] private float _laneVisualWidth = 2.0f;
+        
+        [Tooltip("ノーツのY座標")]
+        [SerializeField] private float _noteY = 0.5f;
+
+        [Header("遠近感設定")]
+        [Tooltip("手前（判定ライン）でのスケール")]
+        [SerializeField] private float _perspectiveNearScale = 1.0f;
+        
+        [Tooltip("奥（生成位置）でのスケール")]
+        [SerializeField] private float _perspectiveFarScale = 0.7f;
+
         [Header("デバッグ設定")]
         [Tooltip("デバッグログを有効にする")]
         [SerializeField] private bool _enableDebugLog = false;
@@ -116,6 +133,36 @@ namespace Jirou.Core
         /// 判定ラインのZ座標
         /// </summary>
         public float HitZ => _hitZ;
+        
+        /// <summary>
+        /// レーンのX座標配列
+        /// </summary>
+        public float[] LaneXPositions => _laneXPositions;
+        
+        /// <summary>
+        /// レーン間の視覚的な幅
+        /// </summary>
+        public float LaneVisualWidth => _laneVisualWidth;
+        
+        /// <summary>
+        /// ノーツのY座標
+        /// </summary>
+        public float NoteY => _noteY;
+        
+        /// <summary>
+        /// 手前（判定ライン）でのスケール
+        /// </summary>
+        public float PerspectiveNearScale => _perspectiveNearScale;
+        
+        /// <summary>
+        /// 奥（生成位置）でのスケール
+        /// </summary>
+        public float PerspectiveFarScale => _perspectiveFarScale;
+        
+        /// <summary>
+        /// レーン幅
+        /// </summary>
+        public float LaneWidth => _laneVisualWidth;
         
         /// <summary>
         /// 楽曲再生位置（ビート）- 小文字プロパティ名対応
@@ -306,6 +353,69 @@ namespace Jirou.Core
             _songBpm = newBpm;
             _secPerBeat = 60.0f / _songBpm;
             LogDebug($"BPM変更: {newBpm}");
+        }
+
+        /// <summary>
+        /// レーン数を取得
+        /// </summary>
+        public int GetLaneCount()
+        {
+            return _laneXPositions != null ? _laneXPositions.Length : 0;
+        }
+
+        /// <summary>
+        /// 指定レーンのX座標を取得
+        /// </summary>
+        public float GetLaneX(int laneIndex)
+        {
+            if (laneIndex < 0 || laneIndex >= _laneXPositions.Length)
+            {
+                Debug.LogWarning($"不正なレーンインデックス: {laneIndex}");
+                return 0f;
+            }
+            return _laneXPositions[laneIndex];
+        }
+
+        /// <summary>
+        /// Z座標に基づいて遠近感を考慮したレーンX座標を計算
+        /// </summary>
+        /// <param name="laneIndex">レーンインデックス（0-3）</param>
+        /// <param name="zPosition">Z座標（0=判定ライン、SpawnZ=生成位置）</param>
+        /// <returns>遠近感を適用したX座標</returns>
+        public float GetPerspectiveLaneX(int laneIndex, float zPosition)
+        {
+            if (laneIndex < 0 || laneIndex >= _laneXPositions.Length)
+            {
+                Debug.LogError($"Invalid lane index: {laneIndex}");
+                return 0f;
+            }
+            
+            float baseX = _laneXPositions[laneIndex];
+            float t = Mathf.Clamp01(zPosition / _spawnZ);
+            float scale = Mathf.Lerp(_perspectiveNearScale, _perspectiveFarScale, t);
+            return baseX * scale;
+        }
+
+        /// <summary>
+        /// 指定したZ座標でのレーン幅を取得
+        /// </summary>
+        /// <param name="zPosition">Z座標</param>
+        /// <returns>そのZ座標でのレーン幅</returns>
+        public float GetLaneWidthAtZ(float zPosition)
+        {
+            float t = Mathf.Clamp01(zPosition / _spawnZ);
+            return _laneVisualWidth * Mathf.Lerp(_perspectiveNearScale, _perspectiveFarScale, t);
+        }
+
+        /// <summary>
+        /// Z座標に基づいたスケール値を取得
+        /// </summary>
+        /// <param name="zPosition">Z座標</param>
+        /// <returns>そのZ座標でのスケール値</returns>
+        public float GetScaleAtZ(float zPosition)
+        {
+            float t = Mathf.Clamp01(zPosition / _spawnZ);
+            return Mathf.Lerp(_perspectiveNearScale, _perspectiveFarScale, t);
         }
 
 

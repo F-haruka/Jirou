@@ -54,13 +54,21 @@ namespace Jirou.Testing
         {
             Debug.Log("[NoteSpawnerTestSetup] テスト環境のセットアップを開始");
             
-            // 1. Conductorのセットアップ
+            // 1. Conductorのセットアップ（最優先）
             SetupConductor();
             
-            // 2. NotePoolManagerのセットアップ
+            // 2. LaneVisualizerがあれば同期を強制
+            Jirou.Visual.LaneVisualizer laneVis = FindObjectOfType<Jirou.Visual.LaneVisualizer>();
+            if (laneVis != null)
+            {
+                laneVis.ForceSync();
+                Debug.Log("[NoteSpawnerTestSetup] LaneVisualizerをConductorと同期しました");
+            }
+            
+            // 3. NotePoolManagerのセットアップ
             SetupNotePoolManager();
             
-            // 3. NoteSpawnerのセットアップ
+            // 4. NoteSpawnerのセットアップ
             SetupNoteSpawner();
             
             // 4. テスト用譜面データの生成
@@ -150,7 +158,12 @@ namespace Jirou.Testing
             // BPMを180に設定（End_Time.wavに合わせて）
             conductor.songBpm = 180f;
             
-            Debug.Log($"[NoteSpawnerTestSetup] Conductorをセットアップしました (BPM: {conductor.songBpm})");
+            // 遠近感設定（統一された値を設定）
+            // これらの値はConductorのデフォルト値として設定済みですが、明示的に設定することも可能
+            // conductor.PerspectiveNearScale = 1.0f;  // 読み取り専用プロパティなので設定不要
+            // conductor.PerspectiveFarScale = 0.25f;  // 読み取り専用プロパティなので設定不要
+            
+            Debug.Log($"[NoteSpawnerTestSetup] Conductorをセットアップしました (BPM: {conductor.songBpm}, 遠近感: Near={conductor.PerspectiveNearScale}, Far={conductor.PerspectiveFarScale})");
         }
         
         /// <summary>
@@ -189,16 +202,30 @@ namespace Jirou.Testing
                 {
                     noteSpawner = spawnerGO.AddComponent<NoteSpawner>();
                 }
+            }
+            
+            // Conductorとの同期を確認
+            if (conductor != null)
+            {
+                // Conductorからレーン設定を取得
+                noteSpawner.laneXPositions = conductor.LaneXPositions;
+                noteSpawner.noteY = conductor.NoteY;
                 
-                // デフォルト設定
+                Debug.Log($"[NoteSpawnerTestSetup] Conductorのレーン設定を適用: {string.Join(", ", noteSpawner.laneXPositions)}");
+            }
+            else
+            {
+                // デフォルト設定（既存）
                 noteSpawner.laneXPositions = new float[] { -3f, -1f, 1f, 3f };
                 noteSpawner.noteY = 0.5f;
-                noteSpawner.beatsShownInAdvance = 3.0f;
-                noteSpawner.enableDebugLog = true;
-                noteSpawner.showNotePathGizmo = true;
-                
-                Debug.Log("[NoteSpawnerTestSetup] NoteSpawnerをセットアップしました");
             }
+            
+            // その他の設定
+            noteSpawner.beatsShownInAdvance = 3.0f;
+            noteSpawner.enableDebugLog = true;
+            noteSpawner.showNotePathGizmo = true;
+            
+            Debug.Log("[NoteSpawnerTestSetup] NoteSpawnerをセットアップしました");
         }
         
         /// <summary>
