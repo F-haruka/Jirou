@@ -157,7 +157,7 @@ MonoBehaviour:
     type: 3}
   holdNotePrefab: {fileID: 6330483975887224903, guid: da7d490c4fd7638489186d77ebc45ec1,
     type: 3}
-  enableDebugLog: 1
+  enableDebugLog: 0
 --- !u!4 &3008611
 Transform:
   m_ObjectHideFlags: 0
@@ -413,6 +413,99 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &596680257
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 596680258}
+  - component: {fileID: 596680259}
+  m_Layer: 0
+  m_Name: JudgementEffectManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &596680258
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 596680257}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 613380371}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &596680259
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 596680257}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2767c463bd616d34c99657ee0e2aaaa8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  perfectEffectPrefab: {fileID: 5056697753240824437, guid: b35ba0ff8da458c4b9a6bf5c51dd0b9b,
+    type: 3}
+  greatEffectPrefab: {fileID: 7850567507573724276, guid: 7cca60e597592274581a66a8d3f37571,
+    type: 3}
+  goodEffectPrefab: {fileID: 9022750763703906936, guid: 20b7587e8d2302d4496cccb12094d239,
+    type: 3}
+  missEffectPrefab: {fileID: 7551222118741423810, guid: 4c9c417eba69f174a9312ba5275313cf,
+    type: 3}
+  effectDuration: 1.5
+  useObjectPool: 1
+  poolSizePerType: 10
+  effectPositionOffset: {x: 0, y: 0, z: 0}
+  enableLOD: 1
+  lodDistance: 10
+  lodQualityReduction: 0.5
+  showDebugInfo: 1
+--- !u!1 &613380370
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 613380371}
+  m_Layer: 0
+  m_Name: JudgementEffects
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &613380371
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 613380370}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1765326353}
+  - {fileID: 596680258}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &627362210
@@ -725,7 +818,7 @@ Transform:
   m_GameObject: {fileID: 1033207526}
   serializedVersion: 2
   m_LocalRotation: {x: 0.2588191, y: 0, z: 0, w: 0.9659258}
-  m_LocalPosition: {x: 0, y: 5, z: -6}
+  m_LocalPosition: {x: 0, y: 9, z: -5.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -971,6 +1064,7 @@ MonoBehaviour:
     type: 3}
   effectDuration: 0.5
   showDebugInfo: 1
+  testModeWithoutNotes: 0
   laneDebugColors:
   - {r: 1, g: 0, b: 0, a: 1}
   - {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
@@ -1050,6 +1144,97 @@ Transform:
   m_Children: []
   m_Father: {fileID: 2143684155}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1765326352
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1765326353}
+  - component: {fileID: 1765326354}
+  m_Layer: 0
+  m_Name: JudgementTextDisplay
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1765326353
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1765326352}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 613380371}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1765326354
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1765326352}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e81322661d7a94439724327e2d70260, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  textPrefab: {fileID: 8053313946958982543, guid: 44b048656e1cb424f83f76c340f0c2bd,
+    type: 3}
+  displayDuration: 1
+  moveSpeed: 2
+  fadeCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  judgmentSettings:
+  - type: 0
+    displayText: Perfect
+    color: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+    scale: 1.2
+  - type: 1
+    displayText: Great
+    color: {r: 0, g: 1, b: 0, a: 1}
+    scale: 1.1
+  - type: 2
+    displayText: Good
+    color: {r: 0, g: 1, b: 1, a: 1}
+    scale: 1
+  - type: 3
+    displayText: Miss
+    color: {r: 1, g: 0, b: 0, a: 1}
+    scale: 0.9
+  poolSize: 20
+  showDebugInfo: 1
 --- !u!1 &2024498305
 GameObject:
   m_ObjectHideFlags: 0
@@ -1287,3 +1472,4 @@ SceneRoots:
   - {fileID: 627362211}
   - {fileID: 323832998}
   - {fileID: 2143684155}
+  - {fileID: 613380371}

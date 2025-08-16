@@ -28,6 +28,7 @@ namespace Jirou.Gameplay
         
         [Header("Debug")]
         [SerializeField] private bool showDebugInfo = true;
+        [SerializeField] private bool testModeWithoutNotes = false;  // ノーツなしでもテスト判定を表示
         [SerializeField] private Color[] laneDebugColors = 
         {
             Color.red,
@@ -129,6 +130,34 @@ namespace Jirou.Gameplay
             if (closestNote == null)
             {
                 Debug.Log($"[InputManager] Lane {laneIndex}: No note to hit (Key: {inputKeys[laneIndex]})");
+                
+                if (testModeWithoutNotes)
+                {
+                    // テストモード：ランダムな判定を生成
+                    JudgmentType[] testJudgments = { JudgmentType.Perfect, JudgmentType.Great, JudgmentType.Good };
+                    JudgmentType testJudgment = testJudgments[UnityEngine.Random.Range(0, testJudgments.Length)];
+                    
+                    // 最後の判定フレームを記録
+                    lastJudgmentFrame[laneIndex] = Time.frameCount;
+                    
+                    // イベント通知（テスト判定）
+                    OnNoteJudged?.Invoke(laneIndex, testJudgment);
+                    
+                    Debug.Log($"[InputManager] Lane {laneIndex}: Test mode - {testJudgment} event fired");
+                }
+                else
+                {
+                    // 通常モード：ミスタップとして扱う
+                    JudgmentType missTap = JudgmentType.Miss;
+                    
+                    // 最後の判定フレームを記録
+                    lastJudgmentFrame[laneIndex] = Time.frameCount;
+                    
+                    // イベント通知（ミスタップ）
+                    OnNoteJudged?.Invoke(laneIndex, missTap);
+                    
+                    Debug.Log($"[InputManager] Lane {laneIndex}: Miss tap event fired");
+                }
                 return;
             }
             
@@ -294,7 +323,10 @@ namespace Jirou.Gameplay
             // 各レーンの状態表示
             for (int i = 0; i < LANE_COUNT; i++)
             {
-                string status = holdStates[i] ? "HOLD" : "READY";
+                // キーの現在の入力状態を確認
+                bool isKeyPressed = Input.GetKey(inputKeys[i]);
+                string status = isKeyPressed ? (holdStates[i] ? "HOLD" : "PRESSED") : "READY";
+                
                 int notesInZone = 0;
                 
                 if (judgmentZones[i] != null)
@@ -302,7 +334,15 @@ namespace Jirou.Gameplay
                     notesInZone = judgmentZones[i].GetNotesInZoneCount();
                 }
                 
-                style.normal.textColor = laneDebugColors[i];
+                // キーが押されている場合は色を変更
+                if (isKeyPressed)
+                {
+                    style.normal.textColor = Color.yellow;
+                }
+                else
+                {
+                    style.normal.textColor = laneDebugColors[i];
+                }
                 
                 GUI.Label(
                     new Rect(20 + i * 150, 50, 140, 30),
@@ -310,7 +350,16 @@ namespace Jirou.Gameplay
                     style
                 );
                 
-                style.normal.textColor = Color.white;
+                // ステータスの色設定
+                if (isKeyPressed)
+                {
+                    style.normal.textColor = holdStates[i] ? Color.cyan : Color.green;
+                }
+                else
+                {
+                    style.normal.textColor = Color.white;
+                }
+                
                 GUI.Label(
                     new Rect(20 + i * 150, 75, 140, 30),
                     $"{status} | Notes: {notesInZone}",

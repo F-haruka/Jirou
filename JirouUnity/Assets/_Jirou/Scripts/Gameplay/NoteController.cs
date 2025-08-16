@@ -100,6 +100,32 @@ namespace Jirou.Gameplay
             {
                 SetupHoldTrail(noteData.HoldDuration);
             }
+            
+            // Colliderの確認と設定（JudgmentZoneとの衝突検出用）
+            var collider = GetComponent<Collider>();
+            if (collider == null)
+            {
+                // BoxColliderを追加
+                var boxCollider = gameObject.AddComponent<BoxCollider>();
+                boxCollider.isTrigger = true;
+                boxCollider.size = new Vector3(1f, 1f, 1f);
+                Debug.Log($"[NoteController] Added BoxCollider to note - Lane: {laneIndex}");
+            }
+            else
+            {
+                // 既存のColliderがTriggerであることを確認
+                collider.isTrigger = true;
+            }
+            
+            // Rigidbodyの確認と設定（トリガー検出に必要）
+            var rb = GetComponent<Rigidbody>();
+            if (rb == null)
+            {
+                rb = gameObject.AddComponent<Rigidbody>();
+                rb.isKinematic = true;  // 物理演算は不要
+                rb.useGravity = false;
+                Debug.Log($"[NoteController] Added Rigidbody to note - Lane: {laneIndex}");
+            }
         }
         
         void Update()

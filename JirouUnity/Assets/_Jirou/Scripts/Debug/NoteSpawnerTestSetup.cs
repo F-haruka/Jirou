@@ -217,7 +217,7 @@ namespace Jirou.Testing
             
             // その他の設定
             noteSpawner.beatsShownInAdvance = 3.0f;
-            noteSpawner.enableDebugLog = true;
+            noteSpawner.enableDebugLog = false;
             noteSpawner.showNotePathGizmo = false;  // Gizmo表示を無効化
             noteSpawner.autoStart = false;  // TestSetupが制御するため自動開始は無効
             
