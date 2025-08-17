@@ -61,6 +61,10 @@ namespace Jirou.Gameplay
         private Vector3 tapNotePrefabScale;
         private Vector3 holdNotePrefabScale;
         
+        // Prefabの元の色を保持
+        private Color tapNotePrefabColor = Color.cyan;  // 青色をデフォルトに
+        private Color holdNotePrefabColor = Color.yellow;  // 黄色をデフォルトに
+        
         // 統計情報
         private int totalTapCreated = 0;
         private int totalHoldCreated = 0;
@@ -138,11 +142,27 @@ namespace Jirou.Gameplay
             {
                 tapNotePrefabScale = tapNotePrefab.transform.localScale;
                 LogDebug($"TapNote Prefabスケール保存: {tapNotePrefabScale}");
+                
+                // Prefabの元の色を保存
+                Renderer tapRenderer = tapNotePrefab.GetComponent<Renderer>();
+                if (tapRenderer != null && tapRenderer.sharedMaterial != null)
+                {
+                    tapNotePrefabColor = tapRenderer.sharedMaterial.color;
+                    LogDebug($"TapNote Prefab色保存: {tapNotePrefabColor}");
+                }
             }
             if (holdNotePrefab != null)
             {
                 holdNotePrefabScale = holdNotePrefab.transform.localScale;
                 LogDebug($"HoldNote Prefabスケール保存: {holdNotePrefabScale}");
+                
+                // Prefabの元の色を保存
+                Renderer holdRenderer = holdNotePrefab.GetComponent<Renderer>();
+                if (holdRenderer != null && holdRenderer.sharedMaterial != null)
+                {
+                    holdNotePrefabColor = holdRenderer.sharedMaterial.color;
+                    LogDebug($"HoldNote Prefab色保存: {holdNotePrefabColor}");
+                }
             }
             
             return tapNotePrefab != null && holdNotePrefab != null;
@@ -359,6 +379,14 @@ namespace Jirou.Gameplay
             return scale;
         }
         
+        /// <summary>
+        /// Prefabの元の色を取得
+        /// </summary>
+        public Color GetPrefabColor(NoteType type)
+        {
+            return type == NoteType.Tap ? tapNotePrefabColor : holdNotePrefabColor;
+        }
+        
         // ========== プライベートメソッド ==========
         
         private bool CanCreateNew(NoteType type)
@@ -385,11 +413,14 @@ namespace Jirou.Gameplay
                 controller.ResetNote();
             }
             
-            // レンダラーの色をリセット
+            // レンダラーの色をPrefabの元の色にリセット
             Renderer renderer = note.GetComponent<Renderer>();
             if (renderer != null && renderer.material != null)
             {
-                renderer.material.color = Color.white;
+                // タイプに応じた元の色に戻す
+                Color originalColor = type == NoteType.Tap ? tapNotePrefabColor : holdNotePrefabColor;
+                renderer.material.color = originalColor;
+                LogDebug($"{type}ノートの色をリセット: {originalColor}");
             }
         }
         
