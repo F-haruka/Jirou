@@ -53,6 +53,9 @@ namespace Jirou.Gameplay
         // シングルトンインスタンス（オプション）
         public static InputManager Instance { get; private set; }
         
+        // ScoreManagerへの参照
+        private ScoreManager scoreManager;
+        
         void Awake()
         {
             // シングルトン設定（オプション）
@@ -73,6 +76,17 @@ namespace Jirou.Gameplay
             
             // コンポーネントの検証
             ValidateComponents();
+            
+            // ScoreManagerを探す
+            scoreManager = FindObjectOfType<ScoreManager>();
+            if (scoreManager != null)
+            {
+                Debug.Log("[InputManager] Found ScoreManager in scene");
+            }
+            else
+            {
+                Debug.LogWarning("[InputManager] ScoreManager not found in scene");
+            }
         }
         
         void Update()
@@ -143,6 +157,13 @@ namespace Jirou.Gameplay
                     // イベント通知（テスト判定）
                     OnNoteJudged?.Invoke(laneIndex, testJudgment);
                     
+                    // ScoreManagerに直接通知
+                    if (scoreManager != null)
+                    {
+                        scoreManager.HandleNoteJudged(laneIndex, testJudgment);
+                        Debug.Log($"[InputManager] Notified ScoreManager (test mode) - Lane {laneIndex}: {testJudgment}");
+                    }
+                    
                     Debug.Log($"[InputManager] Lane {laneIndex}: Test mode - {testJudgment} event fired");
                 }
                 else
@@ -155,6 +176,13 @@ namespace Jirou.Gameplay
                     
                     // イベント通知（ミスタップ）
                     OnNoteJudged?.Invoke(laneIndex, missTap);
+                    
+                    // ScoreManagerに直接通知
+                    if (scoreManager != null)
+                    {
+                        scoreManager.HandleNoteJudged(laneIndex, missTap);
+                        Debug.Log($"[InputManager] Notified ScoreManager (miss tap) - Lane {laneIndex}: {missTap}");
+                    }
                     
                     Debug.Log($"[InputManager] Lane {laneIndex}: Miss tap event fired");
                 }
@@ -178,6 +206,13 @@ namespace Jirou.Gameplay
             
             // イベント通知
             OnNoteJudged?.Invoke(laneIndex, judgment);
+            
+            // ScoreManagerに直接通知
+            if (scoreManager != null)
+            {
+                scoreManager.HandleNoteJudged(laneIndex, judgment);
+                Debug.Log($"[InputManager] Notified ScoreManager - Lane {laneIndex}: {judgment}");
+            }
             
             Debug.Log($"[InputManager] Lane {laneIndex}: {judgment} (Key: {inputKeys[laneIndex]})");
             
@@ -396,6 +431,16 @@ namespace Jirou.Gameplay
                 if (judgmentZones[i] != null)
                 {
                     judgmentZones[i].ResetZone();
+                }
+            }
+            
+            // ScoreManagerを再検索（シーンがリロードされた場合に備えて）
+            if (scoreManager == null)
+            {
+                scoreManager = FindObjectOfType<ScoreManager>();
+                if (scoreManager != null)
+                {
+                    Debug.Log("[InputManager] Found ScoreManager after reset");
                 }
             }
             
