@@ -145,7 +145,9 @@ namespace Jirou.UI
         /// </summary>
         private void OnJudgmentOccurred(JudgmentType type)
         {
-            IncrementJudgmentCount(type);
+            // JudgmentCountDisplayが既にイベントを購読しているため、
+            // ここではカウント増加を行わない（重複を防ぐ）
+            // IncrementJudgmentCount(type); // 削除: 重複カウントを防ぐ
             ShowJudgmentPopup(type);
         }
 
