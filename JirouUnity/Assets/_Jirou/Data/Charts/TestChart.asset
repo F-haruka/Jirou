@@ -21,170 +21,1530 @@ MonoBehaviour:
   _difficulty: 1
   _difficultyName: Normal
   _notes:
-  - _noteType: 1
-    _laneIndex: 0
-    _timeToHit: 0
-    _holdDuration: 2
-    _visualScale: 1
-    _noteColor: {r: 1, g: 1, b: 1, a: 1}
-    _customHitSound: {fileID: 0}
-    _customHitEffect: {fileID: 0}
-    _baseScore: 100
-    _scoreMultiplier: 1
-  - _noteType: 0
-    _laneIndex: 1
-    _timeToHit: 0.5
-    _holdDuration: 2
-    _visualScale: 1
-    _noteColor: {r: 1, g: 1, b: 1, a: 1}
-    _customHitSound: {fileID: 0}
-    _customHitEffect: {fileID: 0}
-    _baseScore: 100
-    _scoreMultiplier: 1
-  - _noteType: 1
-    _laneIndex: 2
-    _timeToHit: 1
-    _holdDuration: 2
-    _visualScale: 1
-    _noteColor: {r: 1, g: 1, b: 1, a: 1}
-    _customHitSound: {fileID: 0}
-    _customHitEffect: {fileID: 0}
-    _baseScore: 100
-    _scoreMultiplier: 1
-  - _noteType: 0
-    _laneIndex: 3
-    _timeToHit: 1.5
-    _holdDuration: 2
-    _visualScale: 1
-    _noteColor: {r: 1, g: 1, b: 1, a: 1}
-    _customHitSound: {fileID: 0}
-    _customHitEffect: {fileID: 0}
-    _baseScore: 100
-    _scoreMultiplier: 1
-  - _noteType: 0
-    _laneIndex: 0
-    _timeToHit: 4
-    _holdDuration: 2
-    _visualScale: 1
-    _noteColor: {r: 1, g: 1, b: 1, a: 1}
-    _customHitSound: {fileID: 0}
-    _customHitEffect: {fileID: 0}
-    _baseScore: 100
-    _scoreMultiplier: 1
-  - _noteType: 0
-    _laneIndex: 1
-    _timeToHit: 4.5
-    _holdDuration: 2
-    _visualScale: 1
-    _noteColor: {r: 1, g: 1, b: 1, a: 1}
-    _customHitSound: {fileID: 0}
-    _customHitEffect: {fileID: 0}
-    _baseScore: 100
-    _scoreMultiplier: 1
-  - _noteType: 0
-    _laneIndex: 2
-    _timeToHit: 5
-    _holdDuration: 2
-    _visualScale: 1
-    _noteColor: {r: 1, g: 1, b: 1, a: 1}
-    _customHitSound: {fileID: 0}
-    _customHitEffect: {fileID: 0}
-    _baseScore: 100
-    _scoreMultiplier: 1
-  - _noteType: 0
-    _laneIndex: 3
-    _timeToHit: 5.5
-    _holdDuration: 2
-    _visualScale: 1
-    _noteColor: {r: 1, g: 1, b: 1, a: 1}
-    _customHitSound: {fileID: 0}
-    _customHitEffect: {fileID: 0}
-    _baseScore: 100
-    _scoreMultiplier: 1
-  - _noteType: 1
-    _laneIndex: 0
-    _timeToHit: 8
-    _holdDuration: 2
-    _visualScale: 1
-    _noteColor: {r: 1, g: 1, b: 1, a: 1}
-    _customHitSound: {fileID: 0}
-    _customHitEffect: {fileID: 0}
-    _baseScore: 100
-    _scoreMultiplier: 1
-  - _noteType: 0
-    _laneIndex: 1
-    _timeToHit: 8.5
-    _holdDuration: 2
-    _visualScale: 1
-    _noteColor: {r: 1, g: 1, b: 1, a: 1}
-    _customHitSound: {fileID: 0}
-    _customHitEffect: {fileID: 0}
-    _baseScore: 100
-    _scoreMultiplier: 1
-  - _noteType: 1
-    _laneIndex: 2
-    _timeToHit: 9
-    _holdDuration: 2
-    _visualScale: 1
-    _noteColor: {r: 1, g: 1, b: 1, a: 1}
-    _customHitSound: {fileID: 0}
-    _customHitEffect: {fileID: 0}
-    _baseScore: 100
-    _scoreMultiplier: 1
-  - _noteType: 0
-    _laneIndex: 3
-    _timeToHit: 9.5
-    _holdDuration: 2
-    _visualScale: 1
-    _noteColor: {r: 1, g: 1, b: 1, a: 1}
-    _customHitSound: {fileID: 0}
-    _customHitEffect: {fileID: 0}
-    _baseScore: 100
-    _scoreMultiplier: 1
-  - _noteType: 0
-    _laneIndex: 0
-    _timeToHit: 12
-    _holdDuration: 2
-    _visualScale: 1
-    _noteColor: {r: 1, g: 1, b: 1, a: 1}
-    _customHitSound: {fileID: 0}
-    _customHitEffect: {fileID: 0}
-    _baseScore: 100
-    _scoreMultiplier: 1
-  - _noteType: 0
-    _laneIndex: 1
-    _timeToHit: 12.5
-    _holdDuration: 2
-    _visualScale: 1
-    _noteColor: {r: 1, g: 1, b: 1, a: 1}
-    _customHitSound: {fileID: 0}
-    _customHitEffect: {fileID: 0}
-    _baseScore: 100
-    _scoreMultiplier: 1
-  - _noteType: 0
-    _laneIndex: 2
-    _timeToHit: 13
-    _holdDuration: 2
-    _visualScale: 1
-    _noteColor: {r: 1, g: 1, b: 1, a: 1}
-    _customHitSound: {fileID: 0}
-    _customHitEffect: {fileID: 0}
-    _baseScore: 100
-    _scoreMultiplier: 1
-  - _noteType: 0
-    _laneIndex: 3
-    _timeToHit: 13.5
-    _holdDuration: 2
-    _visualScale: 1
-    _noteColor: {r: 1, g: 1, b: 1, a: 1}
-    _customHitSound: {fileID: 0}
-    _customHitEffect: {fileID: 0}
-    _baseScore: 100
-    _scoreMultiplier: 1
   - _noteType: 0
     _laneIndex: 0
     _timeToHit: 0
     _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 1
+    _timeToHit: 4
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 2
+    _timeToHit: 8
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 3
+    _timeToHit: 12
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 2
+    _timeToHit: 16
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 1
+    _timeToHit: 20
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 0
+    _timeToHit: 24
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 0
+    _timeToHit: 36
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 0
+    _timeToHit: 37
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 0
+    _timeToHit: 38
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 0
+    _timeToHit: 39
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 1
+    _timeToHit: 40
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 1
+    _timeToHit: 41
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 1
+    _timeToHit: 42
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 1
+    _timeToHit: 43
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 2
+    _timeToHit: 44
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 2
+    _timeToHit: 45
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 2
+    _timeToHit: 46
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 2
+    _timeToHit: 47
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 3
+    _timeToHit: 48
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 3
+    _timeToHit: 49
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 3
+    _timeToHit: 50
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 3
+    _timeToHit: 51
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 0
+    _timeToHit: 52
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 1
+    _timeToHit: 53
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 2
+    _timeToHit: 54
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 3
+    _timeToHit: 55
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 3
+    _timeToHit: 56
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 2
+    _timeToHit: 57
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 1
+    _timeToHit: 58
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 0
+    _timeToHit: 59
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 3
+    _timeToHit: 60
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 0
+    _timeToHit: 60
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 1
+    _timeToHit: 61
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 0
+    _timeToHit: 61
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 1
+    _timeToHit: 62
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 2
+    _timeToHit: 62
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 3
+    _timeToHit: 63
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 2
+    _timeToHit: 63
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 0
+    _timeToHit: 64
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 3
+    _timeToHit: 64
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 1
+    _timeToHit: 65
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 2
+    _timeToHit: 65.5
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 1
+    _timeToHit: 66
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 1
+    _timeToHit: 67
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 1
+    _laneIndex: 0
+    _timeToHit: 68
+    _holdDuration: 1
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 1
+    _laneIndex: 1
+    _timeToHit: 72
+    _holdDuration: 1
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 1
+    _laneIndex: 2
+    _timeToHit: 76
+    _holdDuration: 1
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 1
+    _laneIndex: 3
+    _timeToHit: 80
+    _holdDuration: 1
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 1
+    _laneIndex: 0
+    _timeToHit: 84
+    _holdDuration: 1
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 1
+    _laneIndex: 1
+    _timeToHit: 88
+    _holdDuration: 1
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 2
+    _timeToHit: 93
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 2
+    _timeToHit: 94
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 3
+    _timeToHit: 95
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 1
+    _laneIndex: 3
+    _timeToHit: 96
+    _holdDuration: 1
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 1
+    _laneIndex: 1
+    _timeToHit: 96
+    _holdDuration: 1
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 2
+    _timeToHit: 100
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 0
+    _timeToHit: 100
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 0
+    _timeToHit: 104
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 3
+    _timeToHit: 108
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 1
+    _timeToHit: 112
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 2
+    _timeToHit: 116
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 0
+    _timeToHit: 120
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 1
+    _timeToHit: 122
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 2
+    _timeToHit: 124
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 1
+    _laneIndex: 1
+    _timeToHit: 128
+    _holdDuration: 1
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 1
+    _laneIndex: 3
+    _timeToHit: 128
+    _holdDuration: 1
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 2
+    _timeToHit: 132
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 2
+    _timeToHit: 134
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 1
+    _timeToHit: 136
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 1
+    _timeToHit: 138
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 0
+    _timeToHit: 140
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 0
+    _timeToHit: 144
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 0
+    _timeToHit: 146
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 1
+    _laneIndex: 3
+    _timeToHit: 148
+    _holdDuration: 1
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 3
+    _timeToHit: 151.5
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 2
+    _timeToHit: 151.75
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 1
+    _timeToHit: 152
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 1
+    _timeToHit: 154
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 0
+    _timeToHit: 156
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 3
+    _timeToHit: 156
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 2
+    _timeToHit: 160
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 0
+    _timeToHit: 164
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 0
+    _timeToHit: 165
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 0
+    _timeToHit: 166
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 0
+    _timeToHit: 167
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 1
+    _timeToHit: 168
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 1
+    _timeToHit: 169
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 1
+    _timeToHit: 170
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 1
+    _timeToHit: 171
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 2
+    _timeToHit: 172
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 2
+    _timeToHit: 173
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 2
+    _timeToHit: 174
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 2
+    _timeToHit: 175
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 3
+    _timeToHit: 176
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 3
+    _timeToHit: 177
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 3
+    _timeToHit: 178
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 3
+    _timeToHit: 179
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 2
+    _timeToHit: 180
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 2
+    _timeToHit: 181
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 1
+    _timeToHit: 182
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 1
+    _timeToHit: 183
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 0
+    _timeToHit: 184
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 0
+    _timeToHit: 185
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 1
+    _timeToHit: 186
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 1
+    _timeToHit: 187
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 2
+    _timeToHit: 188
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 2
+    _timeToHit: 189
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 3
+    _timeToHit: 190
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 3
+    _timeToHit: 191
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 3
+    _timeToHit: 192
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 1
+    _laneIndex: 2
+    _timeToHit: 192
+    _holdDuration: 1
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 3
+    _timeToHit: 193
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 1
+    _laneIndex: 1
+    _timeToHit: 194
+    _holdDuration: 1
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 3
+    _timeToHit: 194
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 3
+    _timeToHit: 195
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 3
+    _timeToHit: 196
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 1
+    _laneIndex: 0
+    _timeToHit: 196
+    _holdDuration: 1
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 3
+    _timeToHit: 197
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 3
+    _timeToHit: 198
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 1
+    _laneIndex: 1
+    _timeToHit: 198
+    _holdDuration: 1
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 3
+    _timeToHit: 199
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 2
+    _timeToHit: 200
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 3
+    _timeToHit: 200
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 2
+    _timeToHit: 201
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 2
+    _timeToHit: 202
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 2
+    _timeToHit: 203
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 2
+    _timeToHit: 204
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 1
+    _timeToHit: 204
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 1
+    _timeToHit: 205
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 1
+    _timeToHit: 206
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 1
+    _timeToHit: 207
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 1
+    _laneIndex: 0
+    _timeToHit: 208
+    _holdDuration: 1
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 1
+    _timeToHit: 208
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 1
+    _timeToHit: 209
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 2
+    _timeToHit: 210
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 2
+    _timeToHit: 211
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 3
+    _timeToHit: 212
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 2
+    _timeToHit: 213
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 2
+    _timeToHit: 214
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 2
+    _timeToHit: 215
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 2
+    _timeToHit: 216
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 1
+    _timeToHit: 217
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 1
+    _timeToHit: 218
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 1
+    _timeToHit: 219
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 0
+    _timeToHit: 220
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 0
+    _timeToHit: 221
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 0
+    _timeToHit: 222
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 0
+    _laneIndex: 0
+    _timeToHit: 223
+    _holdDuration: 0
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 1
+    _laneIndex: 0
+    _timeToHit: 224
+    _holdDuration: 1
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 1
+    _laneIndex: 1
+    _timeToHit: 224
+    _holdDuration: 1
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 1
+    _laneIndex: 2
+    _timeToHit: 224
+    _holdDuration: 1
+    _visualScale: 1
+    _noteColor: {r: 1, g: 1, b: 1, a: 1}
+    _customHitSound: {fileID: 0}
+    _customHitEffect: {fileID: 0}
+    _baseScore: 100
+    _scoreMultiplier: 1
+  - _noteType: 1
+    _laneIndex: 3
+    _timeToHit: 224
+    _holdDuration: 1
     _visualScale: 1
     _noteColor: {r: 1, g: 1, b: 1, a: 1}
     _customHitSound: {fileID: 0}
