@@ -389,14 +389,27 @@ namespace Jirou.Gameplay
             // VisualScaleはNoteControllerのUpdateScaleメソッドで適用されるため、ここでは適用しない
             // （レーン幅ベースのスケーリングと競合を避けるため）
             
-            // 色の適用
+            // 色の適用（NoteDataにカスタム色が設定されている場合のみ）
+            // デフォルトのColor.whiteの場合は、Prefabの元の色を使用
             if (noteData.NoteColor != Color.white)
             {
                 Renderer renderer = noteObject.GetComponent<Renderer>();
-                if (renderer != null && renderer.material != null)
+                if (renderer != null)
                 {
-                    renderer.material.color = noteData.NoteColor;
+                    // マテリアルのインスタンスを作成して色を変更（共有マテリアルを変更しない）
+                    // materialプロパティにアクセスすると自動的にインスタンスが作成される
+                    if (renderer.material != null)
+                    {
+                        renderer.material.color = noteData.NoteColor;
+                        LogDebug($"ノーツにカスタム色を適用: {noteData.NoteColor}");
+                    }
                 }
+            }
+            else
+            {
+                // NoteColorがColor.whiteの場合、Prefabの元の色を保持
+                // NotePoolManagerがPrefabの色にリセットするため、ここでは何もしない
+                LogDebug($"ノーツはPrefabのデフォルト色を使用");
             }
             
             // カスタムエフェクトの設定
