@@ -7,7 +7,8 @@
         "Jirou.Core",
         "Jirou.Gameplay",
         "Jirou.UI",
-        "Jirou.Visual"
+        "Jirou.Visual",
+        "Jirou.Editor"
     ],
     "includePlatforms": [
         "Editor"

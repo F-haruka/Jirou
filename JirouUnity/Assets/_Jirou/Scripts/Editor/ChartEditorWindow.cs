@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
 using Jirou.Core;
+using Jirou.Editor.Import;
 
 namespace Jirou.Editor
 {
@@ -558,15 +559,72 @@ namespace Jirou.Editor
             {
                 try
                 {
-                    var importData = LoadJsonFromFile(path);
-                    ApplyImportedData(importData);
-                    ShowImportSuccessDialog(path, importData.notes.Count);
+                    string content = System.IO.File.ReadAllText(path);
+                    
+                    // 形式を検出
+                    string format = ChartImportManager.DetectFormat(content);
+                    
+                    // 確認ダイアログ
+                    if (EditorUtility.DisplayDialog("インポート確認",
+                        $"検出された形式: {format}\n" +
+                        $"現在の譜面データは上書きされます。続行しますか？",
+                        "インポート", "キャンセル"))
+                    {
+                        ImportWithManager(content, path);
+                    }
                 }
                 catch (System.Exception e)
                 {
                     HandleImportError(e);
                 }
             }
+        }
+        
+        private void ImportWithManager(string content, string path)
+        {
+            ChartData importedChart;
+            string error;
+            
+            // プログレスバー表示
+            EditorUtility.DisplayProgressBar("インポート中", "譜面データを変換しています...", 0.5f);
+            
+            try
+            {
+                if (ChartImportManager.TryImport(content, out importedChart, out error))
+                {
+                    // インポート成功
+                    ApplyImportedChartData(importedChart);
+                    ShowImportSuccessDialog(path, importedChart.Notes.Count);
+                }
+                else
+                {
+                    // インポート失敗
+                    EditorUtility.DisplayDialog("インポートエラー", error, "OK");
+                }
+            }
+            finally
+            {
+                EditorUtility.ClearProgressBar();
+            }
+        }
+        
+        private void ApplyImportedChartData(ChartData importedChart)
+        {
+            if (importedChart == null) return;
+            
+            Undo.RecordObject(_currentChart, "Import Chart");
+            
+            // ノーツデータをコピー
+            _currentChart.Notes.Clear();
+            _currentChart.Notes.AddRange(importedChart.Notes);
+            
+            // メタデータの更新（可能な範囲で）
+            // 注: SerializedPropertyを使用する必要がある場合がある
+            
+            EditorUtility.SetDirty(_currentChart);
+            
+            // インポートしたChartDataインスタンスを破棄
+            UnityEngine.Object.DestroyImmediate(importedChart);
         }
         
         /// <summary>
